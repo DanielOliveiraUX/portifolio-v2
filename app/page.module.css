@@ -1,0 +1,277 @@
+/* ---------- Hero ---------- */
+.hero {
+  background: var(--black);
+}
+
+.heroInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 20px;
+  min-height: min(calc(100svh - var(--header-h)), 979px);
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.name {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.857%;
+  width: 100%;
+}
+
+.daniel {
+  width: 43.68%;
+  height: auto;
+  aspect-ratio: 613 / 265;
+  color: #fff;
+}
+
+.oliveira {
+  width: 53.46%;
+  height: auto;
+  aspect-ratio: 751 / 265;
+  color: var(--lime);
+}
+
+.subline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-family: var(--font-display);
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.role {
+  font-size: clamp(16px, 1.72vw, 26px);
+  line-height: 1.28;
+}
+
+.location {
+  font-size: clamp(12px, 1.32vw, 20px);
+  line-height: 1.22;
+  text-align: right;
+}
+
+/* ---------- Seção verde ---------- */
+.about {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+.aboutInner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.26em;
+  padding-block: clamp(72px, 11.8vw, 178px);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.18vw, 33px);
+  line-height: 1.26;
+}
+
+.aboutInner p {
+  max-width: 1190px;
+}
+
+.aboutLine {
+  display: block;
+}
+
+/* ---------- Projetos ---------- */
+.projects {
+  background: var(--black-3);
+  padding-block: 40px;
+}
+
+.projectsInner {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 11px 24px;
+  min-height: 20px;
+}
+
+.allMobile {
+  display: none;
+}
+
+/* ---------- Sobre mim ---------- */
+.bio {
+  background: var(--black-3);
+  padding-block: 40px;
+}
+
+.bioInner {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.bioRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.bioName {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 39px;
+  flex: 0 0 auto;
+}
+
+.bioDaniel {
+  width: 284px;
+  height: auto;
+  aspect-ratio: 613 / 265;
+  color: #fff;
+}
+
+.bioOliveira {
+  width: 348px;
+  height: auto;
+  aspect-ratio: 751 / 265;
+  color: var(--lime);
+}
+
+.bioMedia {
+  position: relative;
+  flex: 0 0 464px;
+  aspect-ratio: 464 / 638;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.bioImage {
+  object-fit: cover;
+  object-position: 30% center;
+}
+
+.bioText {
+  flex: 0 0 354px;
+  display: flex;
+  flex-direction: column;
+  gap: 26.35px;
+  font-size: 17px;
+  line-height: 26.35px;
+  letter-spacing: -0.17px;
+  color: var(--text);
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 1199px) {
+  .bioRow {
+    display: grid;
+    grid-template-columns: minmax(0, 464px) minmax(0, 1fr);
+    align-items: center;
+    gap: 32px 40px;
+  }
+
+  .bioName {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .bioDaniel {
+    width: min(284px, 38vw);
+  }
+
+  .bioOliveira {
+    width: min(348px, 46vw);
+  }
+
+  .bioText {
+    max-width: 440px;
+  }
+}
+
+@media (max-width: 767px) {
+  .heroInner {
+    min-height: min(calc(100svh - var(--header-h)), 640px);
+    padding-bottom: 40px;
+  }
+
+  .name {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .daniel {
+    width: 81.7%;
+  }
+
+  .oliveira {
+    width: 100%;
+  }
+
+  .subline {
+    align-items: flex-end;
+  }
+
+  .aboutLine {
+    display: inline;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .toolbar > nav {
+    min-width: 0;
+  }
+
+  .allDesktop {
+    display: none;
+  }
+
+  .allMobile {
+    display: block;
+    padding-top: 8px;
+  }
+}
+
+@media (max-width: 699px) {
+  .bioRow {
+    grid-template-columns: 1fr;
+  }
+
+  .bioName {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .bioDaniel {
+    width: 66%;
+  }
+
+  .bioOliveira {
+    width: 81%;
+  }
+
+  .bioMedia {
+    width: 100%;
+    max-width: 464px;
+    aspect-ratio: 4 / 5;
+  }
+
+  .bioText {
+    font-size: 16px;
+    line-height: 25px;
+    gap: 20px;
+  }
+}
