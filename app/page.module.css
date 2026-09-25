@@ -92,6 +92,12 @@
 }
 
 .toolbar {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 40;
+  margin-block: -16px;
+  padding-block: 16px;
+  background: var(--black-3);
   display: flex;
   flex-wrap: wrap;
   align-items: center;

@@ -103,11 +103,12 @@ svg {
   letter-spacing: -0.17px;
   text-transform: uppercase;
   white-space: nowrap;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .pill:hover {
-  background: var(--surface-hover);
+  background: var(--lime);
+  color: #000;
 }
 
 .pill--lower {

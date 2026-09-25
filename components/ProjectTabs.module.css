@@ -10,6 +10,11 @@
 
 .tabs a {
   color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.word {
+  white-space: pre;
 }
 
 .tabs a:hover,

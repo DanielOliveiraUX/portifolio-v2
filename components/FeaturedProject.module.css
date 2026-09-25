@@ -71,6 +71,7 @@
   .card {
     grid-template-columns: 1fr;
     padding-right: 0;
+    scroll-margin-top: calc(var(--header-h) + 120px);
   }
 
   .media {
