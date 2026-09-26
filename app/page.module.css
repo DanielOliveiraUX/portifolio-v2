@@ -81,8 +81,8 @@
 .about {
   display: flex;
   align-items: center;
-  min-height: 60vh;
-  min-height: 60svh;
+  min-height: 80vh;
+  min-height: 80svh;
   background: var(--lime);
   color: var(--ink);
 }

@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Hero com fundo que amplia, desfoca e escurece conforme a rolagem,
- * enquanto o texto sobe até 50% da altura do hero (inspirado no
+ * enquanto o texto sobe até 30% da altura do hero (inspirado no
  * "scroll zoom hero" do Motion).
  */
 export function HeroScroll({
@@ -46,7 +46,7 @@ export function HeroScroll({
 
       tl.to(bg.current, { scale: 1.25, filter: "blur(16px)", opacity: 0.35 }, 0).to(
         content.current,
-        { y: () => -hero.offsetHeight * 0.5 },
+        { y: () => -hero.offsetHeight * 0.3 },
         0
       );
     }, hero);
