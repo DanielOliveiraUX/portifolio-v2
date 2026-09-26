@@ -5,7 +5,8 @@ import { FeaturedProject } from "@/components/FeaturedProject";
 import { ProjectTabs, AllProjectsLink } from "@/components/ProjectTabs";
 import { Contact } from "@/components/Contact";
 import { featuredProjects } from "@/data/projects";
-import { about, bio, bioImage, site } from "@/data/site";
+import { AboutText } from "@/components/AboutText";
+import { bio, bioImage, site } from "@/data/site";
 import s from "./page.module.css";
 
 export default function Home() {
@@ -28,18 +29,7 @@ export default function Home() {
 
       {/* Seção verde */}
       <section className={s.about} aria-label="Como eu trabalho">
-        <div className={`container ${s.aboutInner}`}>
-          <p>{about.intro}</p>
-          {about.paragraphs.map((lines, i) => (
-            <p key={i}>
-              {lines.map((line, j) => (
-                <span key={j} className={s.aboutLine}>
-                  {line}{" "}
-                </span>
-              ))}
-            </p>
-          ))}
-        </div>
+        <AboutText className={`container ${s.aboutInner}`} lineClassName={s.aboutLine} />
       </section>
 
       {/* Projetos selecionados */}

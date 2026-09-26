@@ -57,6 +57,10 @@
 
 /* ---------- Seção verde ---------- */
 .about {
+  display: flex;
+  align-items: center;
+  min-height: 60vh;
+  min-height: 60svh;
   background: var(--lime);
   color: var(--ink);
 }
@@ -64,15 +68,13 @@
 .aboutInner {
   display: flex;
   flex-direction: column;
-  gap: 1.26em;
-  padding-block: clamp(72px, 11.8vw, 178px);
+  gap: 0.9em;
+  width: 100%;
+  padding-block: clamp(56px, 7vw, 112px);
   font-family: var(--font-display);
-  font-size: clamp(20px, 2.18vw, 33px);
-  line-height: 1.26;
-}
-
-.aboutInner p {
-  max-width: 1190px;
+  font-size: clamp(24px, 2.9vw, 52px);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
 }
 
 .aboutLine {
