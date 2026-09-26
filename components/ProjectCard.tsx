@@ -11,7 +11,7 @@ export function ProjectCard({ project, headingLevel = "h3" }: { project: Project
         <Image src={project.cover.src} alt={project.cover.alt} fill sizes="(max-width: 559px) 100vw, 283px" className={s.image} />
       </div>
       <div className={s.body}>
-        <div className={s.text} data-velocity-blur>
+        <div className={s.text}>
           <p className={s.meta}>{project.meta}</p>
           <Heading className={s.title}>{project.title}</Heading>
           <p className={s.summary}>{project.summary}</p>

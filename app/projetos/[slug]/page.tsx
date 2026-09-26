@@ -59,7 +59,7 @@ export default async function CasePage({ params }: Params) {
       {/* Intro + corpo */}
       <section className={s.content}>
         <div className={`container ${s.contentInner}`}>
-          <div className={s.intro} data-velocity-blur>
+          <div className={s.intro}>
             <div className={s.introLead}>
               <p className={s.meta}>{project.meta}</p>
               <h2 className={s.introTitle}>{project.title}</h2>
@@ -79,7 +79,7 @@ export default async function CasePage({ params }: Params) {
                     <h3 id={`${sec.id}-titulo`} className={s.blockTitle}>
                       {sec.title}
                     </h3>
-                    <div className={s.blockText} data-velocity-blur>
+                    <div className={s.blockText}>
                       {sec.paragraphs.map((para, i) => (
                         <p key={i}>{para}</p>
                       ))}

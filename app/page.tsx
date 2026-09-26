@@ -28,7 +28,7 @@ export default function Home() {
 
       {/* Seção verde */}
       <section className={s.about} aria-label="Como eu trabalho">
-        <div className={`container ${s.aboutInner}`} data-velocity-blur>
+        <div className={`container ${s.aboutInner}`}>
           <p>{about.intro}</p>
           {about.paragraphs.map((lines, i) => (
             <p key={i}>
@@ -80,7 +80,7 @@ export default function Home() {
             <div className={s.bioMedia}>
               <Image src={bioImage.src} alt={bioImage.alt} fill sizes="(max-width: 699px) 100vw, 464px" className={s.bioImage} />
             </div>
-            <div className={s.bioText} data-velocity-blur>
+            <div className={s.bioText}>
               {bio.map((p) => (
                 <p key={p}>{p}</p>
               ))}
