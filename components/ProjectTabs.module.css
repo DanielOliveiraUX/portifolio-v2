@@ -12,7 +12,7 @@
   padding: 4px 14px;
   border-radius: 100px;
   color: var(--text);
-  transition: color 0.2s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .tabs a :global(.flair-label) {
@@ -23,19 +23,20 @@
   white-space: pre;
 }
 
+/* aba ativa: pílula verde com texto preto, igual ao hover do menu */
 .tabs a[aria-current="true"] {
-  color: var(--lime);
+  background: var(--lime);
+  color: #000;
+}
+
+.tabs a[aria-current="true"] :global(.flair-label) {
+  color: #000;
 }
 
 :global(html:not(.flair-on)) .tabs a:hover,
 .tabs a:focus-visible {
   background: var(--lime);
   color: #000;
-}
-
-.tabs a[aria-current="true"] {
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 .all {
