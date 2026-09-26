@@ -18,7 +18,7 @@ export function FeaturedProject({ project, priority = false }: { project: Projec
       </div>
 
       <div className={s.body}>
-        <div className={s.text}>
+        <div className={s.text} data-velocity-blur>
           <p className={s.meta}>{project.meta}</p>
           <h3 className={s.title}>{project.title}</h3>
           <p className={s.summary}>{project.summary}</p>

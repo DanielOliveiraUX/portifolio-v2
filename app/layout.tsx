@@ -4,6 +4,7 @@ import "@fontsource/plus-jakarta-sans/400.css";
 import "@fontsource/plus-jakarta-sans/600.css";
 import "./globals.css";
 import { Header } from "@/components/Header";
+import { VelocityBlur } from "@/components/VelocityBlur";
 
 export const metadata: Metadata = {
   title: {
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <Header />
         <main id="conteudo">{children}</main>
+        <VelocityBlur />
       </body>
     </html>
   );
