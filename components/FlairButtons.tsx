@@ -41,7 +41,7 @@ export function FlairButtons() {
       const { x, y } = getXY(btn, e);
       gsap.killTweensOf(flair);
       gsap.set(flair, { xPercent: x, yPercent: y });
-      gsap.to(flair, { scale: 1, duration: 0.4, ease: "power2.out" });
+      gsap.to(flair, { scale: 1, duration: 0.7, ease: "power2.inOut" });
     };
 
     const onOut = (e: PointerEvent) => {
@@ -51,7 +51,7 @@ export function FlairButtons() {
       const { x, y } = getXY(btn, e);
       const push = (v: number) => (v > 90 ? v + 20 : v < 10 ? v - 20 : v);
       gsap.killTweensOf(flair);
-      gsap.to(flair, { xPercent: push(x), yPercent: push(y), scale: 0, duration: 0.3, ease: "power2.out" });
+      gsap.to(flair, { xPercent: push(x), yPercent: push(y), scale: 0, duration: 0.5, ease: "power2.inOut" });
     };
 
     const onMove = (e: PointerEvent) => {

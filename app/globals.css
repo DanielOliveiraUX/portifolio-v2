@@ -134,7 +134,7 @@ html:not(.flair-on) .pill:hover,
   position: absolute;
   top: 0;
   left: 0;
-  width: 250%;
+  width: 220%;
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--lime);
