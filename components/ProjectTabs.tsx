@@ -20,9 +20,13 @@ export function ProjectTabs({ items }: { items: { slug: string; tab: string }[] 
             href={`#${i.slug}`}
             aria-label={i.tab}
             aria-current={isActive ? "true" : undefined}
+            className="flair-btn"
           >
-            {isActive && split > 0 && <span className={s.word}>{i.tab.slice(0, split + 1)}</span>}
-            {split > 0 ? i.tab.slice(split + 1) : i.tab}
+            <span className="flair" aria-hidden="true" />
+            <span className="flair-label">
+              {isActive && split > 0 && <span className={s.word}>{i.tab.slice(0, split + 1)}</span>}
+              {split > 0 ? i.tab.slice(split + 1) : i.tab}
+            </span>
           </a>
         );
       })}

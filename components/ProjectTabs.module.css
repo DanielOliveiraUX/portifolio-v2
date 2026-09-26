@@ -1,24 +1,36 @@
 .tabs {
   display: flex;
-  gap: 40px;
+  gap: 12px;
   font-size: 14px;
   line-height: 19.5px;
   letter-spacing: 1.04px;
   white-space: nowrap;
 }
 
+/* sem fundo em repouso; o fundo verde entra no hover pelo efeito flair */
 .tabs a {
+  padding: 4px 14px;
+  border-radius: 100px;
   color: var(--text);
   transition: color 0.2s ease;
+}
+
+.tabs a :global(.flair-label) {
+  display: inline;
 }
 
 .word {
   white-space: pre;
 }
 
-.tabs a:hover,
 .tabs a[aria-current="true"] {
   color: var(--lime);
+}
+
+:global(html:not(.flair-on)) .tabs a:hover,
+.tabs a:focus-visible {
+  background: var(--lime);
+  color: #000;
 }
 
 .tabs a[aria-current="true"] {
@@ -86,7 +98,8 @@
 
 @media (max-width: 767px) {
   .tabs {
-    gap: 24px;
+    gap: 0;
+    margin-inline: -14px;
     overflow-x: auto;
     scrollbar-width: none;
     padding-block: 4px;

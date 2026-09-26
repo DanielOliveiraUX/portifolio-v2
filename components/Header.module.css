@@ -28,15 +28,25 @@
 
 .nav {
   display: flex;
-  gap: 40px;
+  gap: 12px;
+  margin-right: -14px;
   font-size: 14px;
   line-height: 24.4px;
   letter-spacing: 1.04px;
   color: #fff;
 }
 
-.nav a:hover {
-  color: var(--lime);
+/* sem fundo em repouso; o fundo verde entra no hover pelo efeito flair */
+.nav a {
+  padding: 4px 14px;
+  margin-bottom: -4px;
+  border-radius: 100px;
+}
+
+:global(html:not(.flair-on)) .nav a:hover,
+.nav a:focus-visible {
+  background: var(--lime);
+  color: #000;
 }
 
 .toggle {

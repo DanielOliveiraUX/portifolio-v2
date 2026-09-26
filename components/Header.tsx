@@ -31,8 +31,9 @@ export function Header() {
 
         <nav className={s.nav} aria-label="Principal">
           {links.map((l) => (
-            <Link key={l.href} href={l.href}>
-              {l.label}
+            <Link key={l.href} href={l.href} className="flair-btn">
+              <span className="flair" aria-hidden="true" />
+              <span className="flair-label">{l.label}</span>
             </Link>
           ))}
         </nav>
