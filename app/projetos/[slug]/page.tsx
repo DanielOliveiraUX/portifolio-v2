@@ -5,6 +5,7 @@ import { CaseIndex } from "@/components/CaseIndex";
 import { SectionLabel } from "@/components/SectionLabel";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Contact } from "@/components/Contact";
+import { ReadingProgress } from "@/components/ReadingProgress";
 import { getOtherProjects, getProject, projects } from "@/data/projects";
 import s from "./page.module.css";
 
@@ -33,6 +34,8 @@ export default async function CasePage({ params }: Params) {
 
   return (
     <>
+      <ReadingProgress key={project.slug} />
+
       {/* Título + galeria */}
       <section className={s.top}>
         <div className={`container ${s.topInner}`}>
