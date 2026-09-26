@@ -106,6 +106,12 @@
   min-height: 20px;
 }
 
+.allDesktop {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 230px;
+}
+
 .allMobile {
   display: none;
 }

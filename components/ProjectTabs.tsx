@@ -33,8 +33,10 @@ export function ProjectTabs({ items }: { items: { slug: string; tab: string }[] 
 export function AllProjectsLink() {
   return (
     <Link href="/projetos" className={s.all} aria-label="Todos os projetos">
-      <span>Todos</span>
-      <span aria-hidden="true">→</span>
+      <span className={s.label}>
+        Todos<span className={s.more}> os projetos</span>
+      </span>
+      <span className={s.arrow} aria-hidden="true">→</span>
     </Link>
   );
 }

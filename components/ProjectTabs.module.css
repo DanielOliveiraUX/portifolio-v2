@@ -42,11 +42,46 @@
   white-space: nowrap;
 }
 
-.all span:first-child {
+.label {
+  display: inline-flex;
   text-transform: uppercase;
 }
 
-.all:hover {
+/* "os projetos" abre da esquerda para a direita no hover */
+.more {
+  display: inline-block;
+  max-width: 0;
+  overflow: hidden;
+  white-space: pre;
+  opacity: 0;
+  transition: max-width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.all:hover .more,
+.all:focus-visible .more {
+  max-width: 12em;
+  opacity: 1;
+}
+
+.all:hover .arrow,
+.all:focus-visible .arrow {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .more,
+  .arrow {
+    transition: none;
+  }
+}
+
+.all:hover,
+.all:focus-visible {
   background: var(--lime);
   color: #000;
 }
