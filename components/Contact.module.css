@@ -41,7 +41,8 @@
   transition: background-color 0.2s ease;
 }
 
-.cta:hover {
+:global(html:not(.flair-on)) .cta:hover,
+.cta:focus-visible {
   background: var(--lime);
 }
 

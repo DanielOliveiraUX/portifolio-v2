@@ -28,8 +28,11 @@ export function FeaturedProject({ project, priority = false }: { project: Projec
             ))}
           </ul>
         </div>
-        <Link href={`/projetos/${project.slug}`} className="pill">
-          Ver projeto completo<span className="sr-only">: {project.title}</span>
+        <Link href={`/projetos/${project.slug}`} className="pill flair-btn">
+          <span className="flair" aria-hidden="true" />
+          <span className="flair-label">
+            Ver projeto completo<span className="sr-only">: {project.title}</span>
+          </span>
         </Link>
       </div>
     </article>

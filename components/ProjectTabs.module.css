@@ -80,7 +80,7 @@
   }
 }
 
-.all:hover,
+:global(html:not(.flair-on)) .all:hover,
 .all:focus-visible {
   background: var(--lime);
   color: #000;

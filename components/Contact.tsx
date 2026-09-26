@@ -16,10 +16,13 @@ export function Contact({ variant = "home" }: { variant?: "home" | "case" }) {
 
         <span className={s.rule} aria-hidden="true" />
 
-        <a href={site.scheduleUrl} className={s.cta}>
-          <span>Agende uma chamada de discovery gratuita</span>
-          <span className={s.arrow} aria-hidden="true">
-            →
+        <a href={site.scheduleUrl} className={`${s.cta} flair-btn`}>
+          <span className="flair" aria-hidden="true" />
+          <span className="flair-label">
+            <span>Agende uma chamada de discovery gratuita</span>
+            <span className={s.arrow} aria-hidden="true">
+              →
+            </span>
           </span>
         </a>
 
@@ -27,13 +30,17 @@ export function Contact({ variant = "home" }: { variant?: "home" | "case" }) {
 
         <ul className={s.links}>
           <li>
-            <a href={`mailto:${site.email}`} className="pill pill--lower">
-              {site.email}
+            <a href={`mailto:${site.email}`} className="pill pill--lower flair-btn">
+              <span className="flair" aria-hidden="true" />
+              <span className="flair-label">{site.email}</span>
             </a>
           </li>
           <li>
             <a href={site.linkedin} className="pill pill--lower" target="_blank" rel="noopener noreferrer">
-              Linkedin<span className="sr-only"> (abre em nova aba)</span>
+              <span className="flair" aria-hidden="true" />
+              <span className="flair-label">
+                Linkedin<span className="sr-only"> (abre em nova aba)</span>
+              </span>
             </a>
           </li>
         </ul>

@@ -32,11 +32,14 @@ export function ProjectTabs({ items }: { items: { slug: string; tab: string }[] 
 
 export function AllProjectsLink() {
   return (
-    <Link href="/projetos" className={s.all} aria-label="Todos os projetos">
-      <span className={s.label}>
-        Todos<span className={s.more}> os projetos</span>
+    <Link href="/projetos" className={`${s.all} flair-btn`} aria-label="Todos os projetos">
+      <span className="flair" aria-hidden="true" />
+      <span className="flair-label">
+        <span className={s.label}>
+          Todos<span className={s.more}> os projetos</span>
+        </span>
+        <span className={s.arrow} aria-hidden="true">→</span>
       </span>
-      <span className={s.arrow} aria-hidden="true">→</span>
     </Link>
   );
 }

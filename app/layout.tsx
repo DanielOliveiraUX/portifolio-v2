@@ -5,6 +5,7 @@ import "@fontsource/plus-jakarta-sans/600.css";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { VelocityBlur } from "@/components/VelocityBlur";
+import { FlairButtons } from "@/components/FlairButtons";
 
 export const metadata: Metadata = {
   title: {
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main id="conteudo">{children}</main>
         <VelocityBlur />
+        <FlairButtons />
       </body>
     </html>
   );

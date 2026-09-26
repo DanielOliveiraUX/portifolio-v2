@@ -106,8 +106,52 @@ svg {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.pill:hover {
+html:not(.flair-on) .pill:hover,
+.pill:focus-visible {
   background: var(--lime);
+  color: #000;
+}
+
+/* ---------- Botão flair (círculo verde que segue o mouse) ---------- */
+.flair-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.flair {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: scale(0);
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.flair::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--lime);
+  transform: translate(-50%, -50%);
+}
+
+.flair-label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: inherit;
+  transition: color 0.15s ease;
+}
+
+.flair-btn:hover .flair-label,
+.flair-btn:focus-visible .flair-label {
   color: #000;
 }
 
