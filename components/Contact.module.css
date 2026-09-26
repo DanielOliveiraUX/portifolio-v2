@@ -11,7 +11,7 @@
 }
 
 .title {
-  max-width: 685px;
+  max-width: 50vw;
   padding-block: 20px;
   font-size: clamp(34px, 4vw, 60px);
   font-weight: 600;
@@ -80,7 +80,6 @@
 
 /* Variação usada nas páginas de case (frame "detalhe do projeto") */
 .case .title {
-  max-width: none;
   padding-block: 0;
   font-size: clamp(28px, 2.7vw, 40px);
   line-height: 1.235;
@@ -96,6 +95,10 @@
 }
 
 @media (max-width: 767px) {
+  .title {
+    max-width: none;
+  }
+
   .title br {
     display: none;
   }
