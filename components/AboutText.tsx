@@ -8,7 +8,7 @@ import { about } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-/** Texto da seção verde: as palavras sobem girando quando cada parágrafo entra na tela. */
+/** Texto da seção verde: as palavras surgem em sequência toda vez que cada parágrafo entra na tela. */
 export function AboutText({ className, lineClassName }: { className?: string; lineClassName?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -23,13 +23,19 @@ export function AboutText({ className, lineClassName }: { className?: string; li
           autoSplit: true,
           onSplit: (self) =>
             gsap.from(self.words, {
+              // mesmo movimento do split-text do Motion: fade + sobe 10px, mola sem quique
               opacity: 0,
-              y: 40,
-              rotation: 5,
-              duration: 0.6,
-              stagger: 0.04,
-              ease: "power3.out",
-              scrollTrigger: { trigger: p, start: "top 85%", once: true },
+              y: 10,
+              duration: 1.4,
+              stagger: 0.03,
+              ease: "expo.out",
+              scrollTrigger: {
+                trigger: p,
+                start: "top 90%",
+                end: "bottom 10%",
+                // reinicia sempre que o parágrafo volta à tela, descendo ou subindo
+                toggleActions: "restart none restart none",
+              },
             }),
         })
       );
