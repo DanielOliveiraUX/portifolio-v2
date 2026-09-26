@@ -28,4 +28,7 @@ export const bio = [
   "Tem gente que relaxa meditando. Eu relaxo automatizando planilha.",
 ];
 
+/** Imagem de exemplo (Lorem Picsum/Unsplash); trocar pela definitiva. */
+export const heroImage = { src: "/images/hero-bg.jpg" };
+
 export const bioImage = { src: "/images/placeholder.jpg", alt: "" };

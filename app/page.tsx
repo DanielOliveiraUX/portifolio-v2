@@ -6,26 +6,30 @@ import { ProjectTabs, AllProjectsLink } from "@/components/ProjectTabs";
 import { Contact } from "@/components/Contact";
 import { featuredProjects } from "@/data/projects";
 import { AboutText } from "@/components/AboutText";
-import { bio, bioImage, site } from "@/data/site";
+import { HeroScroll } from "@/components/HeroScroll";
+import { bio, bioImage, heroImage, site } from "@/data/site";
 import s from "./page.module.css";
 
 export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className={s.hero}>
-        <div className={`container ${s.heroInner}`}>
-          <h1 className={s.name}>
-            <span className="sr-only">Daniel Oliveira</span>
-            <DanielMark className={s.daniel} />
-            <OliveiraMark className={s.oliveira} />
-          </h1>
-          <div className={s.subline}>
-            <p className={s.role}>{site.role}</p>
-            <p className={s.location}>{site.location}</p>
-          </div>
+      <HeroScroll
+        className={s.hero}
+        bgClassName={s.heroBg}
+        contentClassName={`container ${s.heroInner}`}
+        background={<Image src={heroImage.src} alt="" fill priority sizes="100vw" className={s.heroImg} />}
+      >
+        <h1 className={s.name}>
+          <span className="sr-only">Daniel Oliveira</span>
+          <DanielMark className={s.daniel} />
+          <OliveiraMark className={s.oliveira} />
+        </h1>
+        <div className={s.subline}>
+          <p className={s.role}>{site.role}</p>
+          <p className={s.location}>{site.location}</p>
         </div>
-      </section>
+      </HeroScroll>
 
       {/* Seção verde */}
       <section className={s.about} aria-label="Como eu trabalho">
