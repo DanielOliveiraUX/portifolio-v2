@@ -3,12 +3,11 @@
   align-items: center;
   gap: 8px;
   min-height: 18px;
-  font-family: var(--font-display);
   font-weight: 400;
   font-size: 14px;
-  line-height: normal;
+  line-height: 19.5px;
+  letter-spacing: 1.04px;
   color: var(--lime);
-  text-transform: uppercase;
   white-space: nowrap;
 }
 

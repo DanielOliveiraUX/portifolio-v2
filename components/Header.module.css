@@ -29,10 +29,9 @@
 .nav {
   display: flex;
   gap: 40px;
-  font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 24.4px;
-  text-transform: uppercase;
+  letter-spacing: 1.04px;
   color: #fff;
 }
 

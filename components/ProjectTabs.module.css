@@ -4,7 +4,6 @@
   font-size: 14px;
   line-height: 19.5px;
   letter-spacing: 1.04px;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -44,7 +43,6 @@
 
 .label {
   display: inline-flex;
-  text-transform: uppercase;
 }
 
 /* "os projetos" abre da esquerda para a direita no hover */
