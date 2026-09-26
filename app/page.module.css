@@ -98,18 +98,21 @@
   margin-block: -16px;
   padding-block: 16px;
   background: var(--black-3);
-  display: flex;
-  flex-wrap: wrap;
+  /* colunas laterais iguais mantêm as abas no centro da página */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 11px 24px;
   min-height: 20px;
+}
+
+.toolbar > nav {
+  justify-self: center;
 }
 
 .allDesktop {
   display: flex;
   justify-content: flex-end;
-  min-width: 230px;
 }
 
 .allMobile {
@@ -238,12 +241,14 @@
   }
 
   .toolbar {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
   }
 
   .toolbar > nav {
+    justify-self: auto;
     min-width: 0;
   }
 
