@@ -29,7 +29,12 @@
 
 .all {
   display: inline-flex;
+  align-items: center;
   gap: 8px;
+  padding: 4px 14px;
+  margin-inline: -14px;
+  border-radius: 100px;
+  transition: background-color 0.2s ease, color 0.2s ease;
   font-size: 14px;
   line-height: 19.5px;
   letter-spacing: 1.04px;
@@ -42,7 +47,8 @@
 }
 
 .all:hover {
-  color: var(--lime);
+  background: var(--lime);
+  color: #000;
 }
 
 @media (max-width: 767px) {

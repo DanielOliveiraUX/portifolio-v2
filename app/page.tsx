@@ -47,7 +47,7 @@ export default function Home() {
         <div className={`container ${s.projectsInner}`}>
           <div className={s.toolbar}>
             <SectionLabel as="h2">
-              <span id="trabalhos-titulo">Projetos selecionados</span>
+              <span id="trabalhos-titulo">Projetos</span>
             </SectionLabel>
             <ProjectTabs items={featuredProjects.map(({ slug, tab }) => ({ slug, tab }))} />
             <div className={s.allDesktop}>
