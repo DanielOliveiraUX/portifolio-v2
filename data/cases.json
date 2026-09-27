@@ -8,11 +8,11 @@
       "Defini um produto modular sobre a infraestrutura existente, reduzindo custo de licenças e dependência de fornecedores",
       "Entreguei um produto validado com usuários e com custo de implementação estimado, base para precificação e lançamento"
     ],
-    "intro": "Concessionárias trabalham com equipes de alta rotatividade e pouco tempo sobrando. Mesmo assim, tarefas básicas como cadastrar um carro ou atualizar um anúncio dependiam de vários sistemas, cada um com seu login e sua curva de aprendizado. Como PM, meu trabalho foi transformar essa fragmentação numa tese de produto: uma plataforma única, viável para a empresa construir e simples o bastante para qualquer colaborador adotar.",
+    "intro": "Concessionárias trabalham com equipes de alta rotatividade e pouco tempo sobrando.\nMesmo assim, tarefas básicas como cadastrar um carro ou atualizar um anúncio dependiam de vários sistemas, cada um com seu login e sua curva de aprendizado.\nComo PM, meu trabalho foi transformar essa fragmentação numa tese de produto:\nUma plataforma única, viável para a empresa construir e simples o bastante para qualquer colaborador adotar.",
     "sections": [
       {
         "id": "visao-geral",
-        "title": "Visão geral",
+        "title": "VISÃO GERAL",
         "paragraphs": [
           "O problema não era falta de ferramenta, era excesso. Cada etapa da operação (estoque, anúncios em portais, atendimento ao cliente) vivia num sistema diferente, e nenhum conversava com o outro. O resultado era retrabalho diário: o mesmo anúncio atualizado à mão em vários portais, dados do veículo digitados mais de uma vez e clientes esperando resposta.",
           "Para o negócio, a oportunidade era clara. Centralizar essas tarefas num só produto reduz o custo operacional da concessionária e cria para a empresa um produto com potencial de receita recorrente no setor automotivo."
@@ -20,7 +20,7 @@
       },
       {
         "id": "contexto-do-negocio",
-        "title": "Contexto do negócio",
+        "title": "CONTEXTO DO NEGÓCIO",
         "paragraphs": [
           "O problema apareceu em conversas e visitas técnicas às concessionárias. O padrão se repetia: vários logins, conhecimento espalhado entre sistemas e muito tempo gasto em ações repetitivas. A rotatividade das equipes piorava tudo, porque cada pessoa nova precisava aprender várias ferramentas ao mesmo tempo.",
           "Isso definiu duas restrições desde o início. O produto precisava ser mais simples do que o conjunto de ferramentas que ia substituir, senão ninguém trocaria. E precisava ser barato de operar, porque integrações e armazenamento seriam os maiores custos recorrentes."
@@ -28,7 +28,7 @@
       },
       {
         "id": "pesquisa-e-descoberta",
-        "title": "Pesquisa e descoberta",
+        "title": "PESQUISA E DESCOBERTA",
         "paragraphs": [
           "Comecei mapeando a jornada completa, do cadastro do veículo ao atendimento do cliente. Com entrevistas e observação do trabalho real, identifiquei onde estavam as fricções, quais tarefas se repetiam e quais sistemas não trocavam dados entre si.",
           "Esse mapa virou a base da priorização. Em vez de uma lista de funcionalidades pedidas, o time passou a ter um retrato de onde o tempo da equipe estava sendo perdido, e foi isso que orientou o que entraria primeiro no produto."
@@ -36,7 +36,7 @@
       },
       {
         "id": "decisoes-chave",
-        "title": "Decisões-chave",
+        "title": "DECISÕES-CHAVE",
         "paragraphs": [
           "Priorizei quatro frentes que atacavam as maiores perdas de tempo: cadastro de veículos com preenchimento otimizado, consulta automática a bases públicas de dados veiculares e restrições, um hub para editar e publicar anúncios em vários portais de uma vez e um agente virtual para fazer o primeiro contato e os agendamentos com clientes.",
           "Optei por uma arquitetura modular sobre a infraestrutura que a empresa já usava. Isso reduziu o custo com licenças, evitou dependência de vários fornecedores e permitiu que as concessionárias adotassem o produto aos poucos.",
@@ -45,7 +45,7 @@
       },
       {
         "id": "o-que-foi-entregue",
-        "title": "O que foi entregue",
+        "title": "O QUE FOI ENTREGUE",
         "paragraphs": [
           "O projeto chegou a um produto com escopo bem definido, validado em testes de usabilidade com usuários reais e pronto para desenvolvimento. Os fluxos foram pensados para que colaboradores com pouca familiaridade digital executassem as tarefas sem treinamento longo, e os processos ficaram documentados para suporte e onboarding.",
           "Com a necessidade e o mercado bem entendidos, foi possível estimar com precisão o custo de implementação. Isso deu à empresa uma base concreta para precificar o produto e definir a estratégia de lançamento."
@@ -53,7 +53,7 @@
       },
       {
         "id": "aprendizados",
-        "title": "Aprendizados",
+        "title": "APRENDIZADOS",
         "paragraphs": [
           "Em operações com muitas dores ao mesmo tempo, centralizar e simplificar gera mais valor percebido do que adicionar funcionalidades. E o custo de infraestrutura precisa entrar na conversa desde o começo, porque é ele que decide se o produto se sustenta.",
           "Trabalhar perto do time de desenvolvimento desde cedo manteve as decisões de produto compatíveis com a realidade técnica e evitou retrabalho na hora de construir."
