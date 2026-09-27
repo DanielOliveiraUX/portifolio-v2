@@ -1,6 +1,6 @@
 import { revalidateTag } from "next/cache";
-import { guard } from "@/lib/admin/guard";
-import { ValidationError, createCase, listCases } from "@/lib/admin/content";
+import { errorResponse, guard } from "@/lib/admin/guard";
+import { ValidationError, arrangeCases, createCase, listCases } from "@/lib/admin/content";
 import { CASES_TAG } from "@/lib/content";
 
 /** Lista os artigos (sempre a versão mais recente, sem cache). */
@@ -28,5 +28,19 @@ export async function POST(request: Request) {
     if (err instanceof ValidationError) return Response.json({ error: err.message }, { status: 400 });
     console.error("[admin] falha ao criar case", err);
     return Response.json({ error: "Não foi possível criar o artigo agora." }, { status: 502 });
+  }
+}
+
+/** Salva a ordem dos artigos e quais aparecem na home. */
+export async function PUT(request: Request) {
+  const denied = await guard(request);
+  if (denied) return denied;
+  const body = await request.json().catch(() => null);
+  try {
+    await arrangeCases(body);
+    revalidateTag(CASES_TAG, { expire: 0 });
+    return Response.json({ ok: true });
+  } catch (err) {
+    return errorResponse(err, "Não foi possível salvar a organização agora.", ValidationError);
   }
 }

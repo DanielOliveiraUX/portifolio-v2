@@ -83,6 +83,9 @@ export default async function CasePage({ params }: Params) {
             </p>
           </div>
 
+          {/* vaga do painel "tópicos do card", usado só no modo edição */}
+          <div className={s.imageSlot} data-edit-card-slot />
+
           <hr className={s.divider} />
 
           <div className={s.body}>
@@ -90,6 +93,7 @@ export default async function CasePage({ params }: Params) {
             <div className={s.sections}>
               {project.sections.map((sec, si) => (
                 <div key={sec.id} className={s.sectionGroup}>
+                  <div className={s.imageSlot} data-edit-section-slot={si} />
                   <section id={sec.id} className={s.block} aria-labelledby={`${sec.id}-titulo`}>
                     <h3 id={`${sec.id}-titulo`} className={s.blockTitle} data-edit={`sections.${si}.title`}>
                       {sec.title}

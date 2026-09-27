@@ -1,6 +1,6 @@
 import { revalidateTag } from "next/cache";
-import { guard } from "@/lib/admin/guard";
-import { ValidationError, saveCase, storageMode } from "@/lib/admin/content";
+import { errorResponse, guard } from "@/lib/admin/guard";
+import { ValidationError, deleteCase, saveCase, storageMode } from "@/lib/admin/content";
 import { CASES_TAG } from "@/lib/content";
 
 const MAX_BODY = 100_000; // bytes
@@ -28,12 +28,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     revalidateTag(CASES_TAG, { expire: 0 });
     return Response.json({ ok: true, mode: storageMode() });
   } catch (err) {
-    if (err instanceof ValidationError) return Response.json({ error: err.message }, { status: 400 });
-    console.error("[admin] falha ao salvar case", err);
-    const conflict = err instanceof Error && err.message.includes("409");
-    return Response.json(
-      { error: conflict ? "O artigo mudou enquanto você editava. Recarregue a página e tente de novo." : "Não foi possível salvar agora. Tente de novo." },
-      { status: conflict ? 409 : 502 }
-    );
+    return errorResponse(err, "Não foi possível salvar agora. Tente de novo.", ValidationError);
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const denied = await guard(request);
+  if (denied) return denied;
+  const { slug } = await params;
+  if (!/^[a-z0-9-]{1,80}$/.test(slug)) return Response.json({ error: "Case inválido." }, { status: 400 });
+  try {
+    await deleteCase(slug);
+    revalidateTag(CASES_TAG, { expire: 0 });
+    return Response.json({ ok: true });
+  } catch (err) {
+    return errorResponse(err, "Não foi possível apagar o artigo agora.", ValidationError);
   }
 }

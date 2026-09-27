@@ -10,6 +10,8 @@ type Status = { tone: "ok" | "error" | "info"; text: string } | null;
 type ImageState = { img?: CaseImage; preview?: string };
 
 const FLASH_KEY = "admin-flash";
+/** Volta direto ao modo edição depois de mudar a estrutura. */
+const EDIT_KEY = "admin-keep-editing";
 
 /**
  * Editor das páginas de case. Só aparece para quem entrou em /admin.
@@ -24,6 +26,8 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
   const [status, setStatus] = useState<Status>(null);
   const [images, setImages] = useState<Record<string, ImageState>>(() => initialImages(initial));
   const [uploading, setUploading] = useState<string | null>(null);
+  const [bullets, setBullets] = useState<string[]>(initial.bullets);
+  const [structBusy, setStructBusy] = useState(false);
 
   // Checa a sessão só se o navegador tiver o cookie-aviso (visitantes comuns não fazem requisição).
   useEffect(() => {
@@ -38,6 +42,8 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
       .then((d) => {
         setAuthed(Boolean(d.authenticated));
         setMode(d.mode ?? null);
+        if (d.authenticated && sessionStorage.getItem(EDIT_KEY)) setEditing(true);
+        sessionStorage.removeItem(EDIT_KEY);
       })
       .catch(() => {});
   }, []);
@@ -66,9 +72,18 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
       });
   }, [editing]);
 
+  // Avisa antes de sair com alterações não salvas (desligado quando nós mesmos recarregamos).
+  const leaving = useRef(false);
+  const reload = () => {
+    leaving.current = true;
+    window.location.reload();
+  };
+
   useEffect(() => {
     if (!dirty) return;
-    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    const warn = (e: BeforeUnloadEvent) => {
+      if (!leaving.current) e.preventDefault();
+    };
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
@@ -105,6 +120,7 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
       meta: read("meta"),
       summary: read("summary"),
       intro: read("intro"),
+      bullets: bullets.map((b) => b.trim()).filter(Boolean),
       gallery: initial.gallery.map((_, i) => images[`gallery.${i}`].img),
       sections: initial.sections.map((sec, i) => ({
         id: sec.id,
@@ -134,22 +150,71 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
         FLASH_KEY,
         data.mode === "github" ? "Salvo e publicado. Esta é a versão gravada." : "Salvo em data/cases.json (modo local)."
       );
-      window.location.reload();
+      reload();
     } catch (err) {
       setStatus({ tone: "error", text: err instanceof Error ? err.message : "Erro ao salvar." });
       setSaving(false);
     }
   }
 
+  /** Mudanças de estrutura (seções) são gravadas na hora e recarregam a página. */
+  async function changeSections(op: Record<string, unknown>, done: string) {
+    if (dirty) {
+      setStatus({ tone: "error", text: "Salve ou cancele as alterações de texto antes de mudar as seções." });
+      return;
+    }
+    setStructBusy(true);
+    setStatus({ tone: "info", text: "Atualizando seções…" });
+    try {
+      const res = await fetch(`/api/admin/cases/${initial.slug}/sections`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(op),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Não foi possível alterar as seções.");
+      sessionStorage.setItem(FLASH_KEY, done);
+      sessionStorage.setItem(EDIT_KEY, "1");
+      reload();
+    } catch (err) {
+      setStatus({ tone: "error", text: err instanceof Error ? err.message : "Erro ao alterar as seções." });
+      setStructBusy(false);
+    }
+  }
+
   const cancel = () => {
     setDirty(false);
-    window.location.reload();
+    reload();
   };
 
   if (!authed) return null;
 
   return (
     <>
+      {editing && (
+        <CardBullets
+          bullets={bullets}
+          onChange={(next) => {
+            setBullets(next);
+            setDirty(true);
+          }}
+        />
+      )}
+
+      {editing &&
+        initial.sections.map((sec, i) => (
+          <SectionControls
+            key={sec.id}
+            index={i}
+            title={sec.title}
+            total={initial.sections.length}
+            busy={structBusy}
+            onMove={(direction) => changeSections({ action: "move", index: i, direction }, "Seção movida.")}
+            onRemove={() => changeSections({ action: "remove", index: i }, `Seção "${sec.title}" removida.`)}
+            onAdd={(title) => changeSections({ action: "add", after: i, title }, `Seção "${title}" adicionada.`)}
+          />
+        ))}
+
       {editing &&
         Object.keys(images).map((key) => (
           <ImageControl
@@ -309,4 +374,130 @@ function ImageControl({
     );
   }
   return null;
+}
+
+/** Painel com os tópicos que aparecem no card da home. */
+function CardBullets({ bullets, onChange }: { bullets: string[]; onChange: (b: string[]) => void }) {
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  useEffect(() => setSlot(document.querySelector<HTMLElement>("[data-edit-card-slot]")), []);
+  if (!slot) return null;
+
+  return createPortal(
+    <div className={s.panel}>
+      <p className={s.panelTitle}>Tópicos do card na home</p>
+      {bullets.map((b, i) => (
+        <div key={i} className={s.panelRow}>
+          <input
+            className={s.altInput}
+            type="text"
+            value={b}
+            maxLength={200}
+            placeholder={`Tópico ${i + 1}`}
+            onChange={(e) => onChange(bullets.map((x, j) => (j === i ? e.target.value : x)))}
+          />
+          <button type="button" className={s.ghost} onClick={() => onChange(bullets.filter((_, j) => j !== i))}>
+            Remover
+          </button>
+        </div>
+      ))}
+      {bullets.length < 6 && (
+        <button type="button" className={s.ghost} onClick={() => onChange([...bullets, ""])}>
+          + Adicionar tópico
+        </button>
+      )}
+    </div>,
+    slot
+  );
+}
+
+/** Mover, remover e adicionar seções. */
+function SectionControls({
+  index,
+  title,
+  total,
+  busy,
+  onMove,
+  onRemove,
+  onAdd,
+}: {
+  index: number;
+  title: string;
+  total: number;
+  busy: boolean;
+  onMove: (d: "up" | "down") => void;
+  onRemove: () => void;
+  onAdd: (title: string) => void;
+}) {
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  useEffect(() => setSlot(document.querySelector<HTMLElement>(`[data-edit-section-slot="${index}"]`)), [index]);
+  if (!slot) return null;
+
+  return createPortal(
+    <div className={s.panel}>
+      <div className={s.panelRow}>
+        <span className={s.panelTitle}>Seção {index + 1}</span>
+        <button
+          type="button"
+          className={s.ghost}
+          onClick={() => onMove("up")}
+          disabled={busy || index === 0}
+          aria-label={`Mover "${title}" para cima`}
+        >
+          ↑
+        </button>
+        <button
+          type="button"
+          className={s.ghost}
+          onClick={() => onMove("down")}
+          disabled={busy || index === total - 1}
+          aria-label={`Mover "${title}" para baixo`}
+        >
+          ↓
+        </button>
+        {confirming ? (
+          <>
+            <button type="button" className={s.danger} onClick={onRemove} disabled={busy}>
+              Confirmar remoção
+            </button>
+            <button type="button" className={s.ghost} onClick={() => setConfirming(false)}>
+              Manter
+            </button>
+          </>
+        ) : (
+          <button type="button" className={s.ghost} onClick={() => setConfirming(true)} disabled={busy || total <= 1}>
+            Remover seção
+          </button>
+        )}
+        <button type="button" className={s.ghost} onClick={() => setAdding((v) => !v)} disabled={busy}>
+          + Seção abaixo
+        </button>
+      </div>
+      {adding && (
+        <form
+          className={s.panelRow}
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (newTitle.trim()) onAdd(newTitle.trim());
+          }}
+        >
+          <input
+            className={s.altInput}
+            type="text"
+            value={newTitle}
+            maxLength={200}
+            placeholder="Título da nova seção"
+            onChange={(e) => setNewTitle(e.target.value)}
+            autoFocus
+          />
+          <button type="submit" className={s.primary} disabled={busy || !newTitle.trim()}>
+            Adicionar
+          </button>
+        </form>
+      )}
+    </div>,
+    slot
+  );
 }

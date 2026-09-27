@@ -16,6 +16,12 @@ export function AdminLogin() {
   const [newTitle, setNewTitle] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
+  // Organização (ordem + destaques) editada localmente até clicar em "Salvar organização".
+  const [draft, setDraft] = useState<CaseItem[] | null>(null);
+  const [arranging, setArranging] = useState(false);
+  const [arrangeMsg, setArrangeMsg] = useState<{ tone: "ok" | "error"; text: string } | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   const loadCases = useCallback(async () => {
     setListError("");
@@ -24,6 +30,7 @@ export function AdminLogin() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Não foi possível carregar os artigos.");
       setCases(data.cases);
+      setDraft(data.cases);
     } catch (err) {
       setListError(err instanceof Error ? err.message : "Não foi possível carregar os artigos.");
     }
@@ -81,6 +88,66 @@ export function AdminLogin() {
     }
   }
 
+  const changed = JSON.stringify(draft) !== JSON.stringify(cases);
+  const featuredCount = draft?.filter((c) => c.featured).length ?? 0;
+
+  function move(i: number, dir: -1 | 1) {
+    if (!draft) return;
+    const next = [...draft];
+    [next[i], next[i + dir]] = [next[i + dir], next[i]];
+    setDraft(next);
+    setArrangeMsg(null);
+  }
+
+  function toggleFeatured(slug: string) {
+    if (!draft) return;
+    const item = draft.find((c) => c.slug === slug)!;
+    if (!item.featured && featuredCount >= 3) {
+      setArrangeMsg({ tone: "error", text: "A home mostra no máximo 3 artigos. Tire um antes de colocar outro." });
+      return;
+    }
+    setDraft(draft.map((c) => (c.slug === slug ? { ...c, featured: !c.featured } : c)));
+    setArrangeMsg(null);
+  }
+
+  async function saveArrangement() {
+    if (!draft) return;
+    setArranging(true);
+    setArrangeMsg(null);
+    try {
+      const res = await fetch("/api/admin/cases", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: draft.map((c) => c.slug), featured: draft.filter((c) => c.featured).map((c) => c.slug) }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Não foi possível salvar a organização.");
+      setCases(draft);
+      setArrangeMsg({ tone: "ok", text: "Organização salva. A home já mostra a nova ordem." });
+    } catch (err) {
+      setArrangeMsg({ tone: "error", text: err instanceof Error ? err.message : "Erro ao salvar." });
+    } finally {
+      setArranging(false);
+    }
+  }
+
+  async function remove(slug: string) {
+    setDeleting(slug);
+    setArrangeMsg(null);
+    try {
+      const res = await fetch(`/api/admin/cases/${slug}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Não foi possível apagar o artigo.");
+      setConfirmDelete(null);
+      setArrangeMsg({ tone: "ok", text: "Artigo apagado." });
+      await loadCases();
+    } catch (err) {
+      setArrangeMsg({ tone: "error", text: err instanceof Error ? err.message : "Erro ao apagar." });
+    } finally {
+      setDeleting(null);
+    }
+  }
+
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
     setAuthed(false);
@@ -122,26 +189,79 @@ export function AdminLogin() {
         <div className={s.panel}>
           <div className={s.group}>
             <h2 className={s.label}>Artigos</h2>
-            <p className={s.muted}>Abra um artigo e clique em &ldquo;Editar&rdquo; na barra do rodapé. A sessão dura 8 horas.</p>
+            <p className={s.muted}>
+              Abra um artigo e clique em &ldquo;Editar&rdquo; na barra do rodapé. Use as setas para ordenar e &ldquo;Home&rdquo; para
+              escolher até 3 destaques (na ordem da lista). A sessão dura 8 horas.
+            </p>
             {listError && (
               <p className={s.error} role="alert">
                 {listError}
               </p>
             )}
-            {!cases && !listError && <p className={s.muted}>Carregando…</p>}
-            {cases && (
+            {!draft && !listError && <p className={s.muted}>Carregando…</p>}
+            {draft && (
               <ul className={s.list}>
-                {cases.map((c, i) => (
-                  <li key={c.slug}>
+                {draft.map((c, i) => (
+                  <li key={c.slug} className={s.row}>
                     <Link href={`/projetos/${c.slug}`} className={s.item} prefetch={false}>
                       <span className={s.tab}>{String(i + 1).padStart(2, "0")}</span>
                       <span>{c.title}</span>
-                      {c.featured && <span className={s.badge}>Na home</span>}
                       <span aria-hidden="true">→</span>
                     </Link>
+                    <div className={s.tools}>
+                      <button type="button" className={s.icon} onClick={() => move(i, -1)} disabled={i === 0} aria-label={`Subir "${c.title}"`}>
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        className={s.icon}
+                        onClick={() => move(i, 1)}
+                        disabled={i === draft.length - 1}
+                        aria-label={`Descer "${c.title}"`}
+                      >
+                        ↓
+                      </button>
+                      <button
+                        type="button"
+                        className={c.featured ? s.toggleOn : s.toggle}
+                        onClick={() => toggleFeatured(c.slug)}
+                        aria-pressed={c.featured}
+                      >
+                        Home
+                      </button>
+                      {confirmDelete === c.slug ? (
+                        <>
+                          <button type="button" className={s.danger} onClick={() => remove(c.slug)} disabled={deleting !== null}>
+                            {deleting === c.slug ? "Apagando…" : "Apagar mesmo"}
+                          </button>
+                          <button type="button" className={s.icon} onClick={() => setConfirmDelete(null)}>
+                            Não
+                          </button>
+                        </>
+                      ) : (
+                        <button type="button" className={s.icon} onClick={() => setConfirmDelete(c.slug)} disabled={changed}>
+                          Apagar
+                        </button>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
+            )}
+            {arrangeMsg && (
+              <p className={arrangeMsg.tone === "error" ? s.error : s.ok} role="status">
+                {arrangeMsg.text}
+              </p>
+            )}
+            {changed && (
+              <div className={s.row}>
+                <button className={s.button} type="button" onClick={saveArrangement} disabled={arranging}>
+                  {arranging ? "Salvando…" : "Salvar organização"}
+                </button>
+                <button className={s.ghost} type="button" onClick={() => setDraft(cases)} disabled={arranging}>
+                  Desfazer
+                </button>
+              </div>
             )}
           </div>
 

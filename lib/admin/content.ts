@@ -7,7 +7,7 @@ import type { CaseData, CaseImage, CasesFile } from "@/lib/content-types";
 
 export class ValidationError extends Error {}
 
-const LIMITS = { short: 200, summary: 600, long: 4000, alt: 300, paragraphs: 20, cases: 50 };
+const LIMITS = { short: 200, summary: 600, long: 4000, alt: 300, paragraphs: 20, cases: 50, bullets: 6, sections: 15, featured: 3 };
 export const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // limite de upload das funções da Vercel é 4,5 MB
 
 // ---------- Validação ----------
@@ -48,6 +48,11 @@ export function applyEdit(current: CaseData, body: unknown): CaseData {
 
   const gallery = b.gallery.map((img, i) => cleanImage(img, `Imagem ${i + 1} da galeria`));
 
+  if (!Array.isArray(b.bullets) || b.bullets.length > LIMITS.bullets) {
+    throw new ValidationError(`Tópicos do card: use até ${LIMITS.bullets}`);
+  }
+  const bullets = b.bullets.map((t, i) => cleanText(t, LIMITS.short, `Tópico ${i + 1} do card`, true)).filter(Boolean);
+
   const sections = current.sections.map((sec, i) => {
     const s = (b.sections as unknown[])[i] as Record<string, unknown> | undefined;
     if (!s || s.id !== sec.id) throw new ValidationError("As seções não batem com o case atual");
@@ -68,6 +73,7 @@ export function applyEdit(current: CaseData, body: unknown): CaseData {
     meta: cleanText(b.meta, LIMITS.short, "Linha de contexto"),
     summary: cleanText(b.summary, LIMITS.summary, "Resumo"),
     intro: cleanText(b.intro, LIMITS.long, "Introdução"),
+    bullets,
     gallery,
     sections,
   };
@@ -163,6 +169,82 @@ async function openCases(): Promise<Loaded> {
     };
   }
   throw new Error("Editor sem destino de gravação configurado");
+}
+
+// ---------- Estrutura: seções, ordem, destaques, exclusão ----------
+
+function uniqueSectionId(title: string, sections: { id: string }[]) {
+  const base = slugify(title) || "secao";
+  let id = base;
+  for (let n = 2; sections.some((s) => s.id === id); n++) id = `${base}-${n}`;
+  return id;
+}
+
+export type SectionOp =
+  | { action: "add"; after: number; title: string }
+  | { action: "remove"; index: number }
+  | { action: "move"; index: number; direction: "up" | "down" };
+
+/** Adiciona, remove ou move uma seção do case. */
+export async function changeSections(slug: string, body: unknown) {
+  const op = (body ?? {}) as Partial<SectionOp> & Record<string, unknown>;
+  const { data, save } = await openCases();
+  const c = data.projects.find((p) => p.slug === slug);
+  if (!c) throw new ValidationError("Case não encontrado");
+  const n = c.sections.length;
+  const validIndex = (i: unknown, max: number): i is number => Number.isInteger(i) && (i as number) >= 0 && (i as number) < max;
+
+  if (op.action === "add") {
+    if (n >= LIMITS.sections) throw new ValidationError(`Limite de ${LIMITS.sections} seções atingido`);
+    if (!(op.after === -1 || validIndex(op.after, n))) throw new ValidationError("Posição inválida");
+    const title = cleanText(op.title, LIMITS.short, "Título da seção");
+    c.sections.splice((op.after as number) + 1, 0, { id: uniqueSectionId(title, c.sections), title, paragraphs: [TODO] });
+  } else if (op.action === "remove") {
+    if (!validIndex(op.index, n)) throw new ValidationError("Seção inválida");
+    if (n <= 1) throw new ValidationError("O case precisa de pelo menos uma seção");
+    c.sections.splice(op.index as number, 1);
+  } else if (op.action === "move") {
+    if (!validIndex(op.index, n)) throw new ValidationError("Seção inválida");
+    const to = (op.index as number) + (op.direction === "up" ? -1 : op.direction === "down" ? 1 : NaN);
+    if (!validIndex(to, n)) throw new ValidationError("Não dá para mover para essa posição");
+    [c.sections[op.index as number], c.sections[to]] = [c.sections[to], c.sections[op.index as number]];
+  } else {
+    throw new ValidationError("Ação inválida");
+  }
+  await save(data, `content: altera seções do case ${slug} pelo editor do site`);
+}
+
+/** Define a ordem dos artigos e quais aparecem na home (até 3, na ordem da lista). */
+export async function arrangeCases(body: unknown) {
+  const b = (body ?? {}) as { order?: unknown; featured?: unknown };
+  const { data, save } = await openCases();
+  const slugs = data.projects.map((p) => p.slug);
+  const order = b.order;
+  const featured = b.featured;
+
+  if (!Array.isArray(order) || order.length !== slugs.length || new Set(order).size !== slugs.length || !order.every((s) => slugs.includes(s))) {
+    throw new ValidationError("A lista mudou. Recarregue a página e tente de novo.");
+  }
+  if (!Array.isArray(featured) || !featured.every((s) => slugs.includes(s))) throw new ValidationError("Destaques inválidos");
+  if (featured.length > LIMITS.featured) throw new ValidationError(`A home mostra no máximo ${LIMITS.featured} artigos`);
+  if (!featured.length) throw new ValidationError("Escolha pelo menos um artigo para a home");
+
+  data.projects = (order as string[]).map((s) => {
+    const p = data.projects.find((x) => x.slug === s)!;
+    return { ...p, featured: featured.includes(s) };
+  });
+  await save(data, "content: reorganiza artigos e destaques da home pelo editor do site");
+}
+
+export async function deleteCase(slug: string) {
+  const { data, save } = await openCases();
+  const i = data.projects.findIndex((p) => p.slug === slug);
+  if (i < 0) throw new ValidationError("Case não encontrado");
+  if (data.projects.length <= 1) throw new ValidationError("O portfólio precisa de pelo menos um artigo");
+  const rest = data.projects.filter((p) => p.slug !== slug);
+  if (!rest.some((p) => p.featured)) throw new ValidationError("Esse é o único artigo na home. Escolha outro para a home antes de apagar.");
+  data.projects = rest;
+  await save(data, `content: apaga o case ${slug} pelo editor do site`);
 }
 
 export async function listCases() {

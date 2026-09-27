@@ -11,3 +11,13 @@ export async function guard(request: Request, { write = true } = {}) {
   }
   return null;
 }
+
+/** Converte erros das operações do editor em respostas amigáveis. */
+export function errorResponse(err: unknown, fallback: string, ValidationErrorClass: new (...a: never[]) => Error) {
+  if (err instanceof ValidationErrorClass) return Response.json({ error: err.message }, { status: 400 });
+  console.error("[admin]", fallback, err);
+  if (err instanceof Error && err.message.includes("409")) {
+    return Response.json({ error: "O conteúdo mudou enquanto você editava. Recarregue a página e tente de novo." }, { status: 409 });
+  }
+  return Response.json({ error: fallback }, { status: 502 });
+}
