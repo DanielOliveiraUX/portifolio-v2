@@ -6,6 +6,7 @@ import { SectionLabel } from "@/components/SectionLabel";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Contact } from "@/components/Contact";
 import { ReadingProgress } from "@/components/ReadingProgress";
+import { CaseEditor } from "@/components/admin/CaseEditor";
 import { getOtherProjects, getProject, projects } from "@/data/projects";
 import s from "./page.module.css";
 
@@ -39,7 +40,9 @@ export default async function CasePage({ params }: Params) {
       {/* Título + galeria */}
       <section className={s.top}>
         <div className={`container ${s.topInner}`}>
-          <h1 className={s.pageTitle}>{project.title}</h1>
+          <h1 className={s.pageTitle} data-edit="title">
+            {project.title}
+          </h1>
           <div className={s.gallery}>
             {hero && (
               <div className={`${s.shot} ${s.shotWide}`}>
@@ -64,11 +67,19 @@ export default async function CasePage({ params }: Params) {
         <div className={`container ${s.contentInner}`}>
           <div className={s.intro}>
             <div className={s.introLead}>
-              <p className={s.meta}>{project.meta}</p>
-              <h2 className={s.introTitle}>{project.title}</h2>
-              <p className={s.summary}>{project.summary}</p>
+              <p className={s.meta} data-edit="meta">
+                {project.meta}
+              </p>
+              <h2 className={s.introTitle} data-edit-mirror="title">
+                {project.title}
+              </h2>
+              <p className={s.summary} data-edit="summary">
+                {project.summary}
+              </p>
             </div>
-            <p className={s.introText}>{project.intro}</p>
+            <p className={s.introText} data-edit="intro">
+              {project.intro}
+            </p>
           </div>
 
           <hr className={s.divider} />
@@ -76,15 +87,17 @@ export default async function CasePage({ params }: Params) {
           <div className={s.body}>
             <CaseIndex items={project.sections.map(({ id, title }) => ({ id, title }))} />
             <div className={s.sections}>
-              {project.sections.map((sec) => (
+              {project.sections.map((sec, si) => (
                 <div key={sec.id} className={s.sectionGroup}>
                   <section id={sec.id} className={s.block} aria-labelledby={`${sec.id}-titulo`}>
-                    <h3 id={`${sec.id}-titulo`} className={s.blockTitle}>
+                    <h3 id={`${sec.id}-titulo`} className={s.blockTitle} data-edit={`sections.${si}.title`}>
                       {sec.title}
                     </h3>
                     <div className={s.blockText}>
                       {sec.paragraphs.map((para, i) => (
-                        <p key={i}>{para}</p>
+                        <p key={i} data-edit={`sections.${si}.paragraphs.${i}`}>
+                          {para}
+                        </p>
                       ))}
                     </div>
                   </section>
@@ -117,6 +130,11 @@ export default async function CasePage({ params }: Params) {
       )}
 
       <Contact variant="case" />
+
+      <CaseEditor
+        slug={project.slug}
+        sections={project.sections.map((sec) => ({ id: sec.id, paragraphs: sec.paragraphs.length }))}
+      />
     </>
   );
 }
