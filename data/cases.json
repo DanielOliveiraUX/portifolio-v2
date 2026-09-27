@@ -25,7 +25,7 @@
           "alt": ""
         }
       ],
-      "intro": "Concessionárias trabalham com equipes de alta rotatividade e pouco tempo sobrando.\nMesmo assim, tarefas básicas como cadastrar um carro ou atualizar um anúncio dependiam de vários sistemas, cada um com seu login e sua curva de aprendizado.\nComo PM, meu trabalho foi transformar essa fragmentação numa tese de produto:\nUma plataforma única, viável para a empresa construir e simples o bastante para qualquer colaborador adotar.",
+      "intro": "Concessionárias trabalham com equipes de alta rotatividade e pouco tempo sobrando.\nMesmo assim, tarefas básicas como cadastrar um carro ou atualizar um\nanúncio dependiam de vários sistemas, cada um com seu login e sua curva de aprendizado.\nComo PM, meu trabalho foi transformar essa fragmentação numa tese de produto:\n\nUma plataforma única, viável para a empresa construir e simples o bastante para qualquer colaborador adotar.",
       "sections": [
         {
           "id": "visao-geral",
