@@ -1,16 +1,13 @@
-import { cookies } from "next/headers";
-import { SESSION_COOKIE, sameOrigin, verifySession } from "@/lib/admin/auth";
-import { ValidationError, saveCase } from "@/lib/admin/content";
+import { revalidateTag } from "next/cache";
+import { guard } from "@/lib/admin/guard";
+import { ValidationError, saveCase, storageMode } from "@/lib/admin/content";
+import { CASES_TAG } from "@/lib/content";
 
 const MAX_BODY = 100_000; // bytes
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  if (!sameOrigin(request)) return Response.json({ error: "Origem não permitida." }, { status: 403 });
-
-  const jar = await cookies();
-  if (!verifySession(jar.get(SESSION_COOKIE)?.value)) {
-    return Response.json({ error: "Sessão expirada. Entre de novo em /admin." }, { status: 401 });
-  }
+  const denied = await guard(request);
+  if (denied) return denied;
 
   const { slug } = await params;
   if (!/^[a-z0-9-]{1,80}$/.test(slug)) return Response.json({ error: "Case inválido." }, { status: 400 });
@@ -26,11 +23,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
   }
 
   try {
-    const mode = await saveCase(slug, body);
-    return Response.json({ ok: true, mode });
+    await saveCase(slug, body);
+    // Próxima visita já busca o conteúdo novo, sem servir a versão antiga.
+    revalidateTag(CASES_TAG, { expire: 0 });
+    return Response.json({ ok: true, mode: storageMode() });
   } catch (err) {
     if (err instanceof ValidationError) return Response.json({ error: err.message }, { status: 400 });
     console.error("[admin] falha ao salvar case", err);
-    return Response.json({ error: "Não foi possível salvar agora. Tente de novo." }, { status: 502 });
+    const conflict = err instanceof Error && err.message.includes("409");
+    return Response.json(
+      { error: conflict ? "O artigo mudou enquanto você editava. Recarregue a página e tente de novo." : "Não foi possível salvar agora. Tente de novo." },
+      { status: conflict ? 409 : 502 }
+    );
   }
 }

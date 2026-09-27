@@ -7,31 +7,32 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { Contact } from "@/components/Contact";
 import { ReadingProgress } from "@/components/ReadingProgress";
 import { CaseEditor } from "@/components/admin/CaseEditor";
-import { getOtherProjects, getProject, projects } from "@/data/projects";
+import { getCaseData, getOtherProjects, getProject, getProjects } from "@/lib/content";
 import s from "./page.module.css";
 
 type Params = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getProjects()).map((p) => ({ slug: p.slug }));
 }
 
-export const dynamicParams = false;
+// Artigos criados pelo editor aparecem sem precisar de um novo deploy.
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProject(slug);
   if (!project) return {};
   return { title: project.title, description: project.summary };
 }
 
 export default async function CasePage({ params }: Params) {
   const { slug } = await params;
-  const project = getProject(slug);
-  if (!project) notFound();
+  const [project, data] = await Promise.all([getProject(slug), getCaseData(slug)]);
+  if (!project || !data) notFound();
 
   const [hero, ...rest] = project.gallery;
-  const others = getOtherProjects(project.slug);
+  const others = await getOtherProjects(project.slug);
 
   return (
     <>
@@ -45,14 +46,14 @@ export default async function CasePage({ params }: Params) {
           </h1>
           <div className={s.gallery}>
             {hero && (
-              <div className={`${s.shot} ${s.shotWide}`}>
+              <div className={`${s.shot} ${s.shotWide}`} data-edit-image="gallery.0">
                 <Image src={hero.src} alt={hero.alt} fill priority sizes="100vw" className={s.img} />
               </div>
             )}
             {rest.length > 0 && (
               <div className={s.pair}>
                 {rest.map((img, i) => (
-                  <div key={i} className={`${s.shot} ${s.shotHalf}`}>
+                  <div key={i} className={`${s.shot} ${s.shotHalf}`} data-edit-image={`gallery.${i + 1}`}>
                     <Image src={img.src} alt={img.alt} fill sizes="(max-width: 767px) 100vw, 50vw" className={s.img} />
                   </div>
                 ))}
@@ -101,11 +102,13 @@ export default async function CasePage({ params }: Params) {
                       ))}
                     </div>
                   </section>
-                  {sec.image && (
-                    <div className={`${s.shot} ${s.shotBody}`}>
-                      <Image src={sec.image.src} alt={sec.image.alt} fill sizes="(max-width: 899px) 100vw, 712px" className={s.img} />
-                    </div>
-                  )}
+                  <div className={s.imageSlot} data-edit-image-slot={`sections.${si}`}>
+                    {sec.image && (
+                      <div className={`${s.shot} ${s.shotBody}`} data-edit-image={`sections.${si}`}>
+                        <Image src={sec.image.src} alt={sec.image.alt} fill sizes="(max-width: 899px) 100vw, 712px" className={s.img} />
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -131,10 +134,7 @@ export default async function CasePage({ params }: Params) {
 
       <Contact variant="case" />
 
-      <CaseEditor
-        slug={project.slug}
-        sections={project.sections.map((sec) => ({ id: sec.id, paragraphs: sec.paragraphs.length }))}
-      />
+      <CaseEditor initial={data} />
     </>
   );
 }

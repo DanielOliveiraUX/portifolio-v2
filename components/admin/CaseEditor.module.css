@@ -97,3 +97,66 @@
   outline: 2px solid var(--lime);
   background: rgba(177, 217, 30, 0.06);
 }
+
+/* o editor mostra o texto como foi digitado (sem as maiúsculas do CSS) */
+.editable {
+  text-transform: none !important;
+}
+
+a.ghost {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ---------- imagens ---------- */
+.imageOverlay {
+  position: absolute;
+  inset: auto 12px 12px 12px;
+  z-index: 2;
+}
+
+.imageControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.altInput {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  background: var(--black-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+}
+
+.altInput:focus {
+  outline: 2px solid var(--lime);
+  outline-offset: 1px;
+}
+
+.imageSlot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px dashed rgba(177, 217, 30, 0.55);
+  border-radius: var(--radius);
+}
+
+.slotPreview {
+  width: 100%;
+  aspect-ratio: 712 / 604;
+  object-fit: cover;
+  border-radius: 12px;
+}

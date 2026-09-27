@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/data/projects";
+import type { Project } from "@/lib/content-types";
 import s from "./FeaturedProject.module.css";
 
 export function FeaturedProject({ project, priority = false }: { project: Project; priority?: boolean }) {

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { AdminLogin } from "@/components/admin/AdminLogin";
-import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Editor",
@@ -8,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-  return <AdminLogin cases={projects.map((p) => ({ slug: p.slug, title: p.title, tab: p.tab }))} />;
+  return <AdminLogin />;
 }

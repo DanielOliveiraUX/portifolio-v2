@@ -54,6 +54,11 @@
   object-fit: cover;
 }
 
+/* vaga da imagem da seção: não ocupa espaço quando está vazia */
+.imageSlot {
+  display: contents;
+}
+
 /* ---------- Intro + corpo ---------- */
 .content {
   background: var(--black);
@@ -91,6 +96,13 @@
   font-weight: 600;
   line-height: 1.03;
   letter-spacing: -0.043em;
+}
+
+/* quebras de linha digitadas no editor aparecem na página */
+.summary,
+.introText,
+.blockText p {
+  white-space: pre-line;
 }
 
 .summary {

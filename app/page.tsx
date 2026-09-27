@@ -4,13 +4,15 @@ import { SectionLabel } from "@/components/SectionLabel";
 import { FeaturedProject } from "@/components/FeaturedProject";
 import { ProjectTabs, AllProjectsLink } from "@/components/ProjectTabs";
 import { Contact } from "@/components/Contact";
-import { featuredProjects } from "@/data/projects";
+import { getFeaturedProjects } from "@/lib/content";
 import { AboutText } from "@/components/AboutText";
 import { HeroScroll } from "@/components/HeroScroll";
 import { bio, bioImage, heroImage, site } from "@/data/site";
 import s from "./page.module.css";
 
-export default function Home() {
+export default async function Home() {
+  const featuredProjects = await getFeaturedProjects();
+
   return (
     <>
       {/* Hero */}

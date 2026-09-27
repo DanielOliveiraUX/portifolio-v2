@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/data/projects";
+import type { Project } from "@/lib/content-types";
 import s from "./ProjectCard.module.css";
 
 export function ProjectCard({ project, headingLevel = "h3" }: { project: Project; headingLevel?: "h2" | "h3" }) {

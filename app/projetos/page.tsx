@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SectionLabel } from "@/components/SectionLabel";
 import { ProjectCard } from "@/components/ProjectCard";
 import { Contact } from "@/components/Contact";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/lib/content";
 import s from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -10,7 +10,9 @@ export const metadata: Metadata = {
   description: "Todos os projetos de produto de Daniel Oliveira.",
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const projects = await getProjects();
+
   return (
     <>
       <section className={s.section}>

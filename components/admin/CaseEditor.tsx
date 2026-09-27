@@ -1,27 +1,37 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import type { CaseData, CaseImage } from "@/lib/content-types";
 import s from "./CaseEditor.module.css";
 
 type Status = { tone: "ok" | "error" | "info"; text: string } | null;
+type ImageState = { img?: CaseImage; preview?: string };
+
+const FLASH_KEY = "admin-flash";
 
 /**
- * Barra do editor nas páginas de case. Só aparece para quem entrou em /admin.
- * Os textos editáveis são os elementos com data-edit na página.
+ * Editor das páginas de case. Só aparece para quem entrou em /admin.
+ * Textos: elementos com data-edit. Imagens: data-edit-image (galeria e seções).
  */
-export function CaseEditor({ slug, sections }: { slug: string; sections: { id: string; paragraphs: number }[] }) {
+export function CaseEditor({ initial }: { initial: CaseData }) {
   const [authed, setAuthed] = useState(false);
   const [mode, setMode] = useState<"github" | "local" | null>(null);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [status, setStatus] = useState<Status>(null);
-  const originals = useRef(new Map<HTMLElement, string>());
-
-  const fields = () => Array.from(document.querySelectorAll<HTMLElement>("[data-edit]"));
+  const [images, setImages] = useState<Record<string, ImageState>>(() => initialImages(initial));
+  const [uploading, setUploading] = useState<string | null>(null);
 
   // Checa a sessão só se o navegador tiver o cookie-aviso (visitantes comuns não fazem requisição).
   useEffect(() => {
+    const flash = sessionStorage.getItem(FLASH_KEY);
+    if (flash) {
+      sessionStorage.removeItem(FLASH_KEY);
+      setStatus({ tone: "ok", text: flash });
+    }
     if (!document.cookie.split("; ").includes("admin_hint=1")) return;
     fetch("/api/admin/session", { cache: "no-store" })
       .then((r) => r.json())
@@ -32,11 +42,10 @@ export function CaseEditor({ slug, sections }: { slug: string; sections: { id: s
       .catch(() => {});
   }, []);
 
-  // Liga/desliga a edição direto nos textos da página.
+  // Liga a edição direto nos textos da página.
   useEffect(() => {
     if (!editing) return;
-    const els = fields();
-    originals.current = new Map(els.map((el) => [el, el.innerText]));
+    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-edit]"));
     const onInput = (e: Event) => {
       setDirty(true);
       const el = e.currentTarget as HTMLElement;
@@ -64,29 +73,55 @@ export function CaseEditor({ slug, sections }: { slug: string; sections: { id: s
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
-  const read = (key: string) => document.querySelector<HTMLElement>(`[data-edit="${key}"]`)?.innerText ?? "";
+  const setImage = (key: string, next: ImageState) => {
+    setImages((prev) => ({ ...prev, [key]: next }));
+    setDirty(true);
+  };
 
-  const save = useCallback(async () => {
-    // Uma linha em branco dentro de um parágrafo vira um parágrafo novo; texto apagado some.
+  async function upload(key: string, file: File) {
+    setUploading(key);
+    setStatus({ tone: "info", text: "Enviando imagem…" });
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("slug", initial.slug);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Não foi possível enviar a imagem.");
+      setImage(key, { img: { src: data.src, alt: images[key]?.img?.alt ?? "" }, preview: URL.createObjectURL(file) });
+      setStatus({ tone: "info", text: "Imagem enviada. Clique em Salvar para publicar." });
+    } catch (err) {
+      setStatus({ tone: "error", text: err instanceof Error ? err.message : "Erro ao enviar a imagem." });
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  async function save() {
+    const read = (key: string) => document.querySelector<HTMLElement>(`[data-edit="${key}"]`)?.innerText ?? "";
+    // Linha em branco dentro de um parágrafo cria um parágrafo novo; texto apagado some.
     const payload = {
       title: read("title"),
       meta: read("meta"),
       summary: read("summary"),
       intro: read("intro"),
-      sections: sections.map((sec, i) => ({
+      gallery: initial.gallery.map((_, i) => images[`gallery.${i}`].img),
+      sections: initial.sections.map((sec, i) => ({
         id: sec.id,
         title: read(`sections.${i}.title`),
-        paragraphs: Array.from({ length: sec.paragraphs }, (_, j) => read(`sections.${i}.paragraphs.${j}`))
+        paragraphs: sec.paragraphs
+          .map((_, j) => read(`sections.${i}.paragraphs.${j}`))
           .flatMap((p) => p.split(/\n\s*\n/))
-          .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
+          .map((p) => p.trim())
           .filter(Boolean),
+        ...(images[`sections.${i}`]?.img ? { image: images[`sections.${i}`].img } : {}),
       })),
     };
 
     setSaving(true);
     setStatus({ tone: "info", text: "Salvando…" });
     try {
-      const res = await fetch(`/api/admin/cases/${slug}`, {
+      const res = await fetch(`/api/admin/cases/${initial.slug}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -94,68 +129,184 @@ export function CaseEditor({ slug, sections }: { slug: string; sections: { id: s
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Não foi possível salvar.");
       setDirty(false);
-      setEditing(false);
-      setStatus({
-        tone: "ok",
-        text:
-          data.mode === "github"
-            ? "Salvo! O site publicado atualiza em cerca de 1 minuto."
-            : "Salvo em data/cases.json (modo local).",
-      });
+      // Recarrega para mostrar a versão que ficou gravada.
+      sessionStorage.setItem(
+        FLASH_KEY,
+        data.mode === "github" ? "Salvo e publicado. Esta é a versão gravada." : "Salvo em data/cases.json (modo local)."
+      );
+      window.location.reload();
     } catch (err) {
       setStatus({ tone: "error", text: err instanceof Error ? err.message : "Erro ao salvar." });
-    } finally {
       setSaving(false);
     }
-  }, [slug, sections]);
+  }
 
   const cancel = () => {
-    originals.current.forEach((text, el) => (el.innerText = text));
-    const title = originals.current.get(document.querySelector<HTMLElement>('[data-edit="title"]')!);
-    if (title) document.querySelectorAll<HTMLElement>('[data-edit-mirror="title"]').forEach((m) => (m.textContent = title));
     setDirty(false);
-    setEditing(false);
-    setStatus(null);
-  };
-
-  const logout = async () => {
-    if (dirty) cancel();
-    await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
-    setAuthed(false);
+    window.location.reload();
   };
 
   if (!authed) return null;
 
   return (
-    <div className={s.bar} role="region" aria-label="Editor do case">
-      {status && (
-        <p className={s.status} data-tone={status.tone} role="status">
-          {status.text}
-        </p>
-      )}
-      <div className={s.actions}>
-        {editing ? (
-          <>
-            <span className={s.hint}>Clique em qualquer texto para editar</span>
-            <button type="button" className={s.ghost} onClick={cancel} disabled={saving}>
-              Cancelar
-            </button>
-            <button type="button" className={s.primary} onClick={save} disabled={saving || !dirty}>
-              {saving ? "Salvando…" : "Salvar"}
-            </button>
-          </>
-        ) : (
-          <>
-            {mode === null && <span className={s.hint}>Gravação não configurada no servidor</span>}
-            <button type="button" className={s.primary} onClick={() => { setStatus(null); setEditing(true); }} disabled={mode === null}>
-              Editar textos
-            </button>
-            <button type="button" className={s.ghost} onClick={logout}>
-              Sair
-            </button>
-          </>
+    <>
+      {editing &&
+        Object.keys(images).map((key) => (
+          <ImageControl
+            key={key}
+            id={key}
+            state={images[key]}
+            removable={key.startsWith("sections.")}
+            busy={uploading === key}
+            onFile={(f) => upload(key, f)}
+            onAlt={(alt) => setImage(key, { ...images[key], img: images[key].img && { ...images[key].img!, alt } })}
+            onRemove={() => setImage(key, {})}
+          />
+        ))}
+
+      <div className={s.bar} role="region" aria-label="Editor do case">
+        {status && (
+          <p className={s.status} data-tone={status.tone} role="status">
+            {status.text}
+          </p>
         )}
+        <div className={s.actions}>
+          {editing ? (
+            <>
+              <span className={s.hint}>Clique nos textos ou use os botões nas imagens</span>
+              <button type="button" className={s.ghost} onClick={cancel} disabled={saving}>
+                Cancelar
+              </button>
+              <button type="button" className={s.primary} onClick={save} disabled={saving || !dirty || uploading !== null}>
+                {saving ? "Salvando…" : "Salvar"}
+              </button>
+            </>
+          ) : (
+            <>
+              {mode === null && <span className={s.hint}>Gravação não configurada no servidor</span>}
+              <button
+                type="button"
+                className={s.primary}
+                onClick={() => {
+                  setStatus(null);
+                  setEditing(true);
+                }}
+                disabled={mode === null}
+              >
+                Editar
+              </button>
+              <Link href="/admin" className={s.ghost}>
+                Voltar
+              </Link>
+            </>
+          )}
+        </div>
       </div>
+    </>
+  );
+}
+
+function initialImages(c: CaseData) {
+  const map: Record<string, ImageState> = {};
+  c.gallery.forEach((img, i) => (map[`gallery.${i}`] = { img }));
+  c.sections.forEach((sec, i) => (map[`sections.${i}`] = { img: sec.image }));
+  return map;
+}
+
+/** Controles de uma imagem, colocados dentro da própria imagem na página. */
+function ImageControl({
+  id,
+  state,
+  removable,
+  busy,
+  onFile,
+  onAlt,
+  onRemove,
+}: {
+  id: string;
+  state: ImageState;
+  removable: boolean;
+  busy: boolean;
+  onFile: (f: File) => void;
+  onAlt: (alt: string) => void;
+  onRemove: () => void;
+}) {
+  const input = useRef<HTMLInputElement>(null);
+  const [targets, setTargets] = useState<{ shot: HTMLElement | null; slot: HTMLElement | null }>({ shot: null, slot: null });
+
+  useEffect(() => {
+    setTargets({
+      shot: document.querySelector<HTMLElement>(`[data-edit-image="${id}"]`),
+      slot: document.querySelector<HTMLElement>(`[data-edit-image-slot="${id}"]`),
+    });
+  }, [id]);
+
+  // Reflete a troca/remoção na imagem que já está na página.
+  useEffect(() => {
+    const { shot } = targets;
+    if (!shot) return;
+    shot.hidden = !state.img;
+    const img = shot.querySelector("img");
+    if (img && state.preview) {
+      img.removeAttribute("srcset");
+      img.src = state.preview;
+    }
+    if (img && state.img) img.alt = state.img.alt;
+  }, [targets, state]);
+
+  const picker = (
+    <input
+      ref={input}
+      type="file"
+      accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+      hidden
+      onChange={(e) => {
+        const f = e.target.files?.[0];
+        if (f) onFile(f);
+        e.target.value = "";
+      }}
+    />
+  );
+
+  const controls = (
+    <div className={s.imageControls}>
+      {picker}
+      <button type="button" className={s.primary} onClick={() => input.current?.click()} disabled={busy}>
+        {busy ? "Enviando…" : state.img ? "Trocar imagem" : "Adicionar imagem"}
+      </button>
+      {state.img && (
+        <input
+          className={s.altInput}
+          type="text"
+          placeholder="Descrição da imagem (acessibilidade)"
+          value={state.img.alt}
+          maxLength={300}
+          onChange={(e) => onAlt(e.target.value)}
+        />
+      )}
+      {removable && state.img && (
+        <button type="button" className={s.ghost} onClick={onRemove}>
+          Remover
+        </button>
+      )}
     </div>
   );
+
+  // Imagem que já existia na página: controles por cima dela.
+  if (targets.shot && state.img) return createPortal(<div className={s.imageOverlay}>{controls}</div>, targets.shot);
+
+  // Seção sem imagem (ou imagem nova numa seção que não tinha): bloco próprio na vaga.
+  if (targets.slot) {
+    return createPortal(
+      <div className={s.imageSlot}>
+        {state.img && state.preview && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className={s.slotPreview} src={state.preview} alt={state.img.alt} />
+        )}
+        {controls}
+      </div>,
+      targets.slot
+    );
+  }
+  return null;
 }
