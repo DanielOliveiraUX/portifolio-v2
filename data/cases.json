@@ -17,11 +17,11 @@
           "alt": "Dashboard da plataforma para concessionárias com indicadores de veículos, ações rápidas e gráfico de desempenho"
         },
         {
-          "src": "/images/placeholder.jpg",
+          "src": "/images/uploads/concessionarias-1790470543669-737cb0.jpg",
           "alt": ""
         },
         {
-          "src": "/images/placeholder.jpg",
+          "src": "/images/uploads/concessionarias-1790470547758-de5160.jpg",
           "alt": ""
         }
       ],
@@ -33,7 +33,11 @@
           "paragraphs": [
             "O problema não era falta de ferramenta, era excesso. Cada etapa da operação (estoque, anúncios em portais, atendimento ao cliente) vivia num sistema diferente, e nenhum conversava com o outro. O resultado era retrabalho diário: o mesmo anúncio atualizado à mão em vários portais, dados do veículo digitados mais de uma vez e clientes esperando resposta.",
             "Para o negócio, a oportunidade era clara. Centralizar essas tarefas num só produto reduz o custo operacional da concessionária e cria para a empresa um produto com potencial de receita recorrente no setor automotivo."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/concessionarias-1790470567056-e569ed.jpg",
+            "alt": ""
+          }
         },
         {
           "id": "contexto-do-negocio",
