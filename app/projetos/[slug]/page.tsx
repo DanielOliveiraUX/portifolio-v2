@@ -47,7 +47,11 @@ export default async function CasePage({ params }: Params) {
           <div className={s.gallery}>
             {hero && (
               <div className={`${s.shot} ${s.shotWide}`} data-edit-image="gallery.0">
-                <Image src={hero.src} alt={hero.alt} fill priority sizes="100vw" className={s.img} />
+                {project.coverEmbed ? (
+                  <iframe src={project.coverEmbed} title={hero.alt || project.title} className={s.embed} tabIndex={-1} />
+                ) : (
+                  <Image src={hero.src} alt={hero.alt} fill priority sizes="100vw" className={s.img} />
+                )}
               </div>
             )}
             {rest.length > 0 && (
