@@ -11,6 +11,7 @@
         "Defini um produto modular sobre a infraestrutura existente, reduzindo custo de licenças e dependência de fornecedores",
         "Entreguei um produto validado com usuários e com custo de implementação estimado, base para precificação e lançamento"
       ],
+      "coverEmbed": "/motion/concessionaria-motion.html?embed",
       "gallery": [
         {
           "src": "/images/concessionarias-dashboard.png",

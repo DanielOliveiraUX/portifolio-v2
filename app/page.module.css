@@ -94,7 +94,8 @@
   width: 100%;
   padding-block: clamp(56px, 7vw, 112px);
   font-family: var(--font-display);
-  font-size: clamp(24px, 2.9vw, 52px);
+  /* limitado também pela altura da tela, para o bloco não passar da seção */
+  font-size: clamp(20px, min(2.2vw, 3.6vh), 40px);
   line-height: 1.14;
   letter-spacing: -0.02em;
 }
@@ -106,7 +107,10 @@
 /* ---------- Projetos ---------- */
 .projects {
   background: var(--black-3);
-  padding-block: 40px;
+  /* sem respiro no topo: o menu de abas começa colado no início da seção */
+  padding-block: 0 40px;
+  /* o fundo do menu vaza até as bordas da tela sem criar rolagem lateral */
+  overflow-x: clip;
 }
 
 .projectsInner {
@@ -119,15 +123,25 @@
   position: sticky;
   top: var(--header-h);
   z-index: 40;
-  margin-block: -16px;
+  /* 40px do gap + 8px = 48px entre o menu e o primeiro card */
+  margin-bottom: 8px;
   padding-block: 16px;
-  background: var(--black-3);
   /* colunas laterais iguais mantêm as abas no centro da página */
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 11px 24px;
   min-height: 20px;
+}
+
+/* mesmo vidro do header, ocupando a largura toda da tela */
+.toolbar::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  z-index: -1;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
 }
 
 .toolbar > nav {

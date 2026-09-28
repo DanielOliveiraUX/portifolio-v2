@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Concessionária · motion do dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* tokens do arquivo Figma */
+  --bg:#0b0c10; --surface:#12141b; --line:#21242a;
+  --azul:#4e5efe; --azul-bg:#1e1e2c; --azul-2:#2b85d5;
+  --verde:#67f654; --verde-bg:#18241f;
+  --amarelo:#ffe409; --amarelo-bg:#24221c;
+  --vermelho:#f33d47; --texto:#c4c4c4;
+  /* chrome da página (fora do palco) */
+  --page:#e7e7eb; --chrome-fg:#1a1c22; --chrome-btn:#ffffff; --chrome-line:#cfd0d6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--page:#050608;--chrome-fg:#c4c4c4;--chrome-btn:#12141b;--chrome-line:#21242a;}
+}
+:root[data-theme="dark"]{--page:#050608;--chrome-fg:#c4c4c4;--chrome-btn:#12141b;--chrome-line:#21242a;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--chrome-fg);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+#app{height:100%;display:flex;flex-direction:column}
+#viewport{flex:1;min-height:0;position:relative;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;transform-origin:center;overflow:hidden;border-radius:14px;color:#fff;
+  background:radial-gradient(ellipse at 50% 45%,#11131b 0%,var(--bg) 62%)}
+body.rec #stage{border-radius:0}
+#world{position:absolute;inset:0;transform-origin:center}
+#shape{position:absolute;left:0;top:0;overflow:hidden;border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.75),0 1px 3px rgba(0,0,0,.35);transition:box-shadow .25s}
+#shape.focus{box-shadow:0 0 0 2px rgba(78,94,254,.6),0 40px 90px -30px rgba(0,0,0,.75)}
+#content{position:absolute;inset:0}
+.layer{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  transition:opacity .2s ease,filter .2s ease,transform .28s cubic-bezier(.2,.8,.2,1)}
+.layer.hide{opacity:0;filter:blur(12px);transform:translate(-50%,-50%) scale(.96)}
+#cursor{position:absolute;left:0;top:0;width:34px;height:40px;transform-origin:0 0;pointer-events:none;z-index:5;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.ripple{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:2px solid rgba(255,255,255,.7);
+  pointer-events:none;animation:rip .45s ease-out forwards;z-index:4}
+@keyframes rip{from{transform:scale(.2);opacity:1}to{transform:scale(1);opacity:0}}
+
+/* conteúdo dos estados */
+.row{display:flex;align-items:center}
+.ic{border-radius:50%;display:grid;place-items:center;flex:none}
+.t1{font-size:20px;font-weight:500;color:#fff;line-height:1.35}
+.t2{font-size:17px;color:var(--texto);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi{transition:color .25s}
+.mi.on{color:var(--azul)!important}
+#qtext{color:#6b7280}
+#qtext.typed{color:#fff}
+.caret{display:inline-block;width:2px;height:24px;background:var(--azul);margin-left:2px;opacity:0}
+#shape.focus .caret{animation:blink 1s steps(1) infinite}
+@keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+kbd{font:500 14px Inter,system-ui,sans-serif;color:#fff;border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+.badge{position:absolute;top:22px;right:22px;width:26px;height:26px;border-radius:50%;background:var(--vermelho);
+  font-size:14px;font-weight:700;display:grid;place-items:center;transform:scale(0)}
+.badge.pop{animation:pop .5s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes pop{to{transform:scale(1)}}
+.bell.ring{animation:ring .6s ease-out;transform-origin:50% 8%}
+@keyframes ring{0%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-12deg)}60%{transform:rotate(7deg)}80%{transform:rotate(-3deg)}100%{transform:rotate(0)}}
+.plus svg{transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.plus.spin svg{transform:rotate(90deg)}
+.knob{position:absolute;top:6px;left:6px;width:116px;height:64px;border-radius:32px;background:var(--azul-bg)}
+.segs{position:relative;display:flex;height:100%}
+.segs span{flex:1;display:grid;place-items:center;font-size:18px;color:var(--texto);transition:color .2s}
+.segs span.on{color:var(--azul);font-weight:500}
+.pt{opacity:0;transition:opacity .3s,r .3s}
+svg.show .pt{opacity:1}
+.seg{transition:stroke-width .35s cubic-bezier(.3,1.4,.5,1)}
+#vt{transition:color .2s}
+#vt.hov{color:#fff;text-decoration:underline}
+
+/* controles */
+#bar{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;padding:12px 16px}
+#bar button{font:500 13px Inter,system-ui,sans-serif;background:var(--chrome-btn);color:var(--chrome-fg);
+  border:1px solid var(--chrome-line);border-radius:8px;padding:8px 12px;cursor:pointer}
+#bar button[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+#bar button:focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+#bar .sep{width:1px;height:22px;background:var(--chrome-line);margin:0 4px}
+#bar .hint{font-size:12px;opacity:.7;margin-left:6px}
+body.rec #bar{display:none}
+body.embed{background:transparent}
+#note{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(18,20,27,.92);color:#c4c4c4;
+  font-size:13px;padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .4s;pointer-events:none}
+#note.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="viewport">
+    <div id="stage">
+      <div id="world">
+      <div id="shape"><div id="content"></div></div>
+      <svg id="cursor" viewBox="0 0 20 26" aria-hidden="true">
+        <path d="M1.5 1.5 L1.5 21.5 L6.8 16.6 L10.4 24.6 L13.9 23.1 L10.4 15.2 L17.6 15.2 Z" fill="#fff" stroke="#0b0c10" stroke-width="1.4" stroke-linejoin="round"/>
+      </svg>
+      </div>
+    </div>
+  </div>
+  <div id="bar" role="toolbar" aria-label="Controles da animação">
+    <button id="bPlay">Pausar</button>
+    <button id="bRestart">Reiniciar</button>
+    <span class="sep"></span>
+    <button id="b169" aria-pressed="true">16:9</button>
+    <button id="b916" aria-pressed="false">9:16</button>
+    <span class="sep"></span>
+    <button id="bSound" aria-pressed="false">Batida 120 BPM</button>
+    <button id="bRec">Modo gravação</button>
+    <span class="hint">Espaço pausa · R reinicia · Esc sai do modo gravação</span>
+  </div>
+</div>
+<div id="note">Modo gravação · Esc para sair</div>
+
+<script>
+(() => {
+const BEAT = 500, LOOP = 32; // 120 BPM, 8 compassos = 16 s
+const $ = s => document.querySelector(s);
+const stage = $('#stage'), world = $('#world'), shape = $('#shape'), content = $('#content'), cursorEl = $('#cursor');
+let W = 1920, H = 1080;
+
+/* ---------- molas ---------- */
+const Spring = (v, k = 260, c = 24) => ({ v, t: v, vel: 0, k, c });
+const step = (s, dt) => { const f = -s.k * (s.v - s.t) - s.c * s.vel; s.vel += f * dt; s.v += s.vel * dt; };
+const snap = (s, v) => { s.v = s.t = v; s.vel = 0; };
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const sp = { w: Spring(24), h: Spring(24), r: Spring(12), cr: Spring(78, 200, 26), cg: Spring(94, 200, 26), cb: Spring(254, 200, 26) };
+const cur = { x: Spring(0, 170, 24), y: Spring(0, 170, 24), s: Spring(1, 700, 32), o: Spring(0, 220, 28) };
+const knob = Spring(-116, 320, 26);
+let dragging = false;
+const all = () => [...Object.values(sp), ...Object.values(cur), knob];
+
+/* ---------- ícones ---------- */
+const I = {
+  grid: '<svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><rect x="1" y="1" width="8.5" height="8.5" rx="2"/><rect x="12.5" y="1" width="8.5" height="8.5" rx="2"/><rect x="1" y="12.5" width="8.5" height="8.5" rx="2"/><rect x="12.5" y="12.5" width="8.5" height="8.5" rx="2"/></svg>',
+  search: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  bell: '<svg class="bell" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  chat: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>',
+  car: '<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11a2 2 0 0 1 2 2v4a1 1 0 0 1-1 1h-1a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H4a1 1 0 0 1-1-1v-4a2 2 0 0 1 2-2zm2.1 0h9.8l-1.2-3.6a.5.5 0 0 0-.5-.4H8.8a.5.5 0 0 0-.5.4L7.1 11zM7 15.5a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5zm10 0a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5z"/></svg>',
+  plus: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'
+};
+
+/* ---------- estados (forma + conteúdo) ---------- */
+const S = {
+  dot:    { w: 24,  h: 24,  r: 12,  bg: '#4e5efe' },
+  menu:   { w: 320, h: 76,  r: 16,  bg: '#12141b' },
+  search: { w: 560, h: 76,  r: 16,  bg: '#12141b' },
+  bell:   { w: 104, h: 104, r: 52,  bg: '#12141b' },
+  toast:  { w: 680, h: 112, r: 20,  bg: '#12141b' },
+  kpi:    { w: 480, h: 232, r: 22,  bg: '#12141b' },
+  action: { w: 460, h: 124, r: 20,  bg: '#12141b' },
+  toggle: { w: 360, h: 76,  r: 38,  bg: '#12141b' },
+  chart:  { w: 820, h: 470, r: 24,  bg: '#12141b' },
+  pie:    { w: 440, h: 440, r: 220, bg: '#12141b' },
+  resumo: { w: 420, h: 320, r: 22,  bg: '#12141b' },
+  title:  { w: 640, h: 168, r: 28,  bg: '#4e5efe' }
+};
+
+function smooth(p) {
+  let d = `M${p[0][0]},${p[0][1]}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+    d += ` C${b[0] + (c[0] - a[0]) / 6},${b[1] + (c[1] - a[1]) / 6} ${c[0] - (e[0] - b[0]) / 6},${c[1] - (e[1] - b[1]) / 6} ${c[0]},${c[1]}`;
+  }
+  return d;
+}
+const PIE = [['OLX', 15, '#2b85d5'], ['iCarros', 30, '#4e5efe'], ['Webmotors', 20, '#67f654'], ['Facebook', 20, '#ffe409'], ['Direto', 15, '#f33d47']];
+const PIE_R = 140, PIE_C = 2 * Math.PI * PIE_R;
+const RESUMO = [['Veículos em estoque', 245], ['Novos clientes', 38], ['Vendas no mês', 21], ['Leads ativos', 64]];
+
+const H_ = {
+  menu: () => `<div class="row mi" style="height:100%;padding:0 28px;gap:16px;font-size:22px;color:var(--texto)">${I.grid}<span>Painel</span></div>`,
+  search: () => `<div class="row" style="height:100%;padding:0 22px 0 26px;gap:14px;color:var(--texto);font-size:21px">${I.search}
+      <span class="row" style="flex:1"><span id="qtext">Buscar...</span><i class="caret"></i></span><kbd>Ctrl K</kbd></div>`,
+  bell: () => `<div style="height:100%;display:grid;place-items:center;position:relative">${I.bell}<span class="badge">3</span></div>`,
+  toast: () => `<div class="row" style="height:100%;padding:0 28px;gap:20px">
+      <div class="ic" style="width:56px;height:56px;background:var(--amarelo-bg);color:var(--amarelo)">${I.chat}</div>
+      <div style="flex:1;min-width:0"><div class="t1">Novo lead do OLX</div><div class="t2">Dácio Veras tem interesse no Toyota Corolla 2024</div></div>
+      <div class="row" style="gap:8px;font-size:15px;color:var(--texto)">agora<i style="width:9px;height:9px;border-radius:50%;background:var(--azul);display:block"></i></div></div>`,
+  kpi: () => `<div style="height:100%;padding:32px;display:flex;flex-direction:column;justify-content:space-between">
+      <div class="row" style="gap:20px"><div class="ic" style="width:68px;height:68px;background:var(--azul-bg);color:var(--azul)">${I.car}</div>
+        <div><div style="font-size:19px;font-weight:300;color:var(--texto)">Veículos disponíveis</div>
+        <div id="kpiN" style="font-size:52px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums">0</div></div></div>
+      <div class="row" style="justify-content:space-between;font-size:17px">
+        <span><span style="color:var(--verde)">↑ 12%</span> <span style="color:var(--texto)">no último mês</span></span>
+        <span id="vt" style="color:var(--texto);font-size:15px">Ver todos</span></div></div>`,
+  action: () => `<div class="row" style="height:100%;padding:0 30px;gap:22px">
+      <div class="ic plus" style="width:60px;height:60px;background:var(--azul)">${I.plus}</div>
+      <div><div class="t1" style="font-size:22px">Adicionar veículo</div><div class="t2">Cadastre um novo veículo</div></div></div>`,
+  toggle: () => `<div style="position:relative;height:100%;padding:6px"><div id="knob" class="knob"></div>
+      <div class="segs" id="segs"><span class="on">7 dias</span><span>30 dias</span><span>90 dias</span></div></div>`,
+  chart: () => {
+    const x0 = 48, x1 = 736, y0 = 14, y1 = 286, n = 7;
+    const X = i => x0 + (x1 - x0) * i / (n - 1), Y = v => y0 + (60 - v) / 120 * (y1 - y0);
+    const series = [['#4e5efe', [20, 12, 14, 32, 52, 50, 26]], ['#ffe409', [-12, -2, 6, 9, 11, 15, 22]], ['#f33d47', [4, 20, 34, 41, 35, 38, 57]]];
+    let g = '';
+    [60, 20, -20, -60].forEach(v => g += `<line x1="${x0}" x2="${x1}" y1="${Y(v)}" y2="${Y(v)}" stroke="#21242a"/><text x="${x0 - 12}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`);
+    ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'].forEach((m, i) => g += `<line x1="${X(i)}" x2="${X(i)}" y1="${y0}" y2="${y1}" stroke="#191c22"/><text x="${X(i)}" y="${y1 + 26}" text-anchor="middle">${m}</text>`);
+    series.forEach(([c, vals], k) => {
+      const pts = vals.map((v, i) => [X(i), Y(v)]);
+      g += `<path class="ln" d="${smooth(pts)}" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      pts.forEach((p, i) => g += `<circle class="pt"${k === 0 && i === 4 ? ' id="hot"' : ''} cx="${p[0]}" cy="${p[1]}" r="5" fill="${c}" stroke="#12141b" stroke-width="2"/>`);
+    });
+    const dot = c => `<i style="width:10px;height:10px;border-radius:50%;background:${c};display:block"></i>`;
+    return `<div style="height:100%;padding:28px 32px">
+      <div class="row" style="justify-content:space-between;height:34px"><span style="font-size:24px">Desempenho</span>
+        <span style="font-size:14px;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:#fff">Últimos 30 dias ▾</span></div>
+      <div class="row" style="justify-content:center;gap:22px;font-size:14px;color:var(--texto);margin:14px 0">
+        <span class="row" style="gap:7px">${dot('#4e5efe')}Veículos</span><span class="row" style="gap:7px">${dot('#ffe409')}Clientes</span><span class="row" style="gap:7px">${dot('#f33d47')}Vendas</span></div>
+      <svg id="chartSvg" width="756" height="320" viewBox="0 0 756 320" font-size="13" fill="#c4c4c4" font-family="Inter,system-ui,sans-serif">${g}</svg></div>`;
+  },
+  pie: () => {
+    const segs = PIE.map(([n, , c], i) => `<circle class="seg" data-i="${i}" cx="220" cy="220" r="${PIE_R}" fill="none" stroke="${c}" stroke-width="90" stroke-dasharray="0 ${PIE_C}" transform="rotate(-90 220 220)"/>`).join('');
+    return `<div style="position:relative;width:440px;height:440px"><svg width="440" height="440" viewBox="0 0 440 440">${segs}</svg>
+      <div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div>
+        <div id="pv" style="font-size:40px;font-weight:700;line-height:1">5</div>
+        <div id="pl" style="font-size:15px;color:var(--texto);margin-top:6px">canais de lead</div></div></div></div>`;
+  },
+  resumo: () => `<div style="height:100%"><div style="font-size:22px;font-weight:500;padding:22px 28px;height:72px">Resumo rápido</div>
+      ${RESUMO.map(([l], i) => `<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding:0 28px;height:62px">
+        <span style="font-size:17px;color:var(--texto)">${l}</span><span id="r${i}" style="font-size:21px;font-weight:500;font-variant-numeric:tabular-nums">0</span></div>`).join('')}</div>`,
+  title: () => `<div style="height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 48px">
+      <div style="font-size:64px;font-weight:700;letter-spacing:-.02em;line-height:1">Dashboard</div>
+      <div style="font-size:22px;color:rgba(255,255,255,.85);margin-top:12px">Visão geral do seu negócio</div></div>`
+};
+
+/* ---------- troca de conteúdo com blur ---------- */
+function swap(html, w, h) {
+  [...content.children].forEach(el => { el.classList.add('hide'); setTimeout(() => el.remove(), 260); });
+  if (!html) return;
+  const el = document.createElement('div');
+  el.className = 'layer hide';
+  el.style.width = w + 'px'; el.style.height = h + 'px';
+  el.innerHTML = html;
+  content.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('hide')));
+}
+function setBg(h) { const [r, g, b] = hex(h); sp.cr.t = r; sp.cg.t = g; sp.cb.t = b; }
+function morph(name) {
+  const s = S[name];
+  sp.w.t = s.w; sp.h.t = s.h; sp.r.t = s.r; setBg(s.bg);
+  shape.classList.remove('focus');
+  swap(H_[name] ? H_[name]() : '', s.w, s.h);
+}
+const q = s => content.querySelector('.layer:last-child ' + s);
+
+/* ---------- linha do tempo (em batidas) ---------- */
+const events = [], tweens = [];
+const ev = (b, fn) => events.push({ t: b * BEAT, fn, done: false });
+const easeOut = p => 1 - Math.pow(1 - p, 3);
+const easeInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const tw = (b0, b1, fn, ease = easeOut) => tweens.push({ t0: b0 * BEAT, t1: b1 * BEAT, fn, ease, done: false });
+const away = () => ({ x: W / 2 + 90, y: H / 2 + 90 });
+const go = (b, x, y) => ev(b, () => { cur.x.t = x; cur.y.t = y; cur.o.t = 1; });
+const click = (b, fn) => { ev(b, () => { cur.s.t = .8; ripple(); fn && fn(); }); ev(b + .2, () => { if (!dragging) cur.s.t = 1; }); };
+
+ev(0, () => morph('dot'));
+ev(.5, () => morph('menu'));
+go(1.25, -40, 6);
+click(2, () => { setBg('#1e1e2c'); q('.mi')?.classList.add('on'); });
+
+ev(3.5, () => morph('search'));
+go(3.6, -120, 6);
+click(4, () => shape.classList.add('focus'));
+tw(4.25, 5.75, p => { const e = q('#qtext'); if (!e) return; const s = 'Toyota Corolla 2024'; e.textContent = s.slice(0, Math.round(s.length * p)) || 'Buscar...'; e.classList.toggle('typed', p > 0); }, p => p);
+
+ev(6.5, () => morph('bell'));
+go(6.6, 6, 12);
+click(7, () => { q('.bell')?.classList.add('ring'); q('.badge')?.classList.add('pop'); });
+
+ev(8, () => morph('toast'));
+go(8.5, 220, 26);
+ev(9, () => setBg('#171a24'));
+
+ev(10, () => morph('kpi'));
+tw(10.25, 11.75, p => { const e = q('#kpiN'); if (e) e.textContent = Math.round(127 * p); });
+go(10.75, 173, 76);
+ev(11.25, () => q('#vt')?.classList.add('hov'));
+
+ev(12, () => morph('action'));
+go(12.25, -170, 4);
+click(13, () => { setBg('#1a1d2b'); q('.plus')?.classList.add('spin'); });
+
+ev(14, () => { morph('toggle'); snap(knob, -116); });
+go(14.25, -116, 6);
+ev(15, () => { cur.s.t = .85; dragging = true; });
+tw(15.25, 16, p => { cur.x.t = -116 + 116 * p; }, easeInOut);
+ev(16.25, () => { dragging = false; cur.s.t = 1; knob.t = 0; });
+
+ev(17, () => morph('chart'));
+go(17.25, 240, -20);
+tw(17.25, 19.5, p => {
+  const svg = q('#chartSvg'); if (!svg) return;
+  svg.querySelectorAll('.ln').forEach((l, i) => {
+    const len = l.getTotalLength(), pp = Math.min(1, Math.max(0, p * 1.15 - i * .075));
+    l.style.strokeDasharray = len; l.style.strokeDashoffset = len * (1 - pp);
+  });
+  svg.classList.toggle('show', p > .92);
+}, easeInOut);
+go(19.5, 129, -91);
+ev(20, () => q('#hot')?.setAttribute('r', 8));
+
+ev(20.5, () => morph('pie'));
+go(20.6, 260, 150);
+tw(20.75, 22.25, p => {
+  let acc = 0;
+  content.querySelectorAll('.layer:last-child .seg').forEach((c, i) => {
+    const f = PIE[i][1] / 100;
+    c.setAttribute('stroke-dasharray', `${PIE_C * f * p} ${PIE_C}`);
+    c.setAttribute('stroke-dashoffset', `${-PIE_C * acc * p}`);
+    acc += f;
+  });
+});
+go(22.25, 133, 43);
+ev(22.75, () => {
+  q('.seg[data-i="1"]')?.setAttribute('stroke-width', 112);
+  const v = q('#pv'), l = q('#pl'); if (v) v.textContent = '30%'; if (l) l.textContent = 'iCarros';
+});
+
+ev(24, () => morph('resumo'));
+tw(24.25, 25.5, p => RESUMO.forEach(([, n], i) => { const e = q('#r' + i); if (e) e.textContent = Math.round(n * p); }));
+go(24.5, 120, 60);
+
+ev(26.5, () => morph('title'));
+ev(26.75, () => { const a = away(); cur.x.t = a.x; cur.y.t = a.y; cur.o.t = 0; });
+ev(30, () => morph('dot'));
+
+/* ---------- cursor ---------- */
+function ripple() {
+  const r = document.createElement('div');
+  r.className = 'ripple';
+  r.style.left = (W / 2 + cur.x.v + 3) + 'px';
+  r.style.top = (H / 2 + cur.y.v + 3) + 'px';
+  world.appendChild(r);
+  setTimeout(() => r.remove(), 500);
+}
+
+/* ---------- som (batida de referência) ---------- */
+let actx = null, soundOn = false, lastHalf = -1;
+function kick(t) {
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + .14);
+  g.gain.setValueAtTime(.9, t); g.gain.exponentialRampToValueAtTime(.001, t + .3);
+  o.connect(g).connect(actx.destination); o.start(t); o.stop(t + .32);
+}
+function hat(t) {
+  const b = actx.createBuffer(1, Math.floor(actx.sampleRate * .05), actx.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const s = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
+  s.buffer = b; f.type = 'highpass'; f.frequency.value = 7000;
+  g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + .05);
+  s.connect(f).connect(g).connect(actx.destination); s.start(t);
+}
+
+/* ---------- loop ---------- */
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+let playing = !reduce, elapsed = 0, last = performance.now();
+
+function restart() {
+  elapsed = 0; lastHalf = -1; dragging = false;
+  events.forEach(e => e.done = false); tweens.forEach(t => t.done = false);
+  content.innerHTML = ''; shape.classList.remove('focus');
+  const a = away(); snap(cur.x, a.x); snap(cur.y, a.y); snap(cur.o, 0); snap(cur.s, 1); snap(knob, -116);
+}
+function runTimeline() {
+  for (const e of events) if (!e.done && elapsed >= e.t) { e.done = true; e.fn(); }
+  for (const t of tweens) {
+    if (t.done || elapsed < t.t0) continue;
+    const p = Math.min(1, (elapsed - t.t0) / (t.t1 - t.t0));
+    t.fn(t.ease(p));
+    if (p >= 1) t.done = true;
+  }
+}
+function render() {
+  const cx = W / 2, cy = H / 2;
+  const w = Math.max(0, sp.w.v), h = Math.max(0, sp.h.v);
+  shape.style.width = w + 'px'; shape.style.height = h + 'px';
+  shape.style.transform = `translate(${cx - w / 2}px,${cy - h / 2}px)`;
+  shape.style.borderRadius = Math.max(0, Math.min(sp.r.v, w / 2, h / 2)) + 'px';
+  const c = v => Math.round(Math.max(0, Math.min(255, v)));
+  shape.style.background = `rgb(${c(sp.cr.v)},${c(sp.cg.v)},${c(sp.cb.v)})`;
+  cursorEl.style.transform = `translate(${cx + cur.x.v}px,${cy + cur.y.v}px) scale(${cur.s.v})`;
+  cursorEl.style.opacity = Math.max(0, Math.min(1, cur.o.v));
+  if (dragging) knob.t = cur.x.v;
+  const kn = q('#knob');
+  if (kn) {
+    kn.style.transform = `translateX(${knob.v + 116}px)`;
+    const idx = Math.round((knob.v + 116) / 116);
+    q('#segs')?.querySelectorAll('span').forEach((s, i) => s.classList.toggle('on', i === idx));
+  }
+}
+function frame(now) {
+  const dt = Math.min(now - last, 50); last = now;
+  if (playing) {
+    elapsed += dt;
+    if (elapsed >= LOOP * BEAT) restart();
+    runTimeline();
+    if (soundOn && actx) {
+      const half = Math.floor(elapsed / (BEAT / 2));
+      if (half !== lastHalf) { lastHalf = half; half % 2 ? hat(actx.currentTime) : kick(actx.currentTime); }
+    }
+    const n = 4, hs = dt / 1000 / n;
+    for (let i = 0; i < n; i++) all().forEach(s => step(s, hs));
+  }
+  render();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- palco e controles ---------- */
+function fit() {
+  const vp = $('#viewport');
+  const rec = document.body.classList.contains('rec');
+  // no embed o palco cobre a área toda (corta as laterais vazias) em vez de caber inteiro
+  const fitFn = document.body.classList.contains('embed') ? Math.max : Math.min;
+  const s = fitFn(vp.clientWidth / W, vp.clientHeight / H) * (rec ? 1 : .94);
+  stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+  world.style.transform = `scale(${H > W ? 1.25 : 1.5})`;
+}
+function setFormat(v) {
+  [W, H] = v ? [1080, 1920] : [1920, 1080];
+  $('#b169').setAttribute('aria-pressed', !v); $('#b916').setAttribute('aria-pressed', !!v);
+  fit(); restart();
+}
+function togglePlay() { playing = !playing; $('#bPlay').textContent = playing ? 'Pausar' : 'Reproduzir'; }
+function setRec(on) {
+  document.body.classList.toggle('rec', on); fit();
+  if (on && !document.body.classList.contains('embed')) { const n = $('#note'); n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 1800); }
+}
+$('#bPlay').onclick = togglePlay;
+$('#bRestart').onclick = restart;
+$('#b169').onclick = () => setFormat(0);
+$('#b916').onclick = () => setFormat(1);
+$('#bSound').onclick = () => {
+  soundOn = !soundOn;
+  if (soundOn && !actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { soundOn = false; } }
+  if (actx && actx.state === 'suspended') actx.resume();
+  $('#bSound').setAttribute('aria-pressed', soundOn);
+};
+$('#bRec').onclick = () => setRec(true);
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'h' || e.key === 'H') setRec(!document.body.classList.contains('rec'));
+  else if (e.key === 'Escape') setRec(false);
+});
+addEventListener('resize', fit);
+/* modo embed: ?embed na URL esconde controles e pausa fora da tela */
+const EMBED = new URLSearchParams(location.search).has('embed');
+if (EMBED) {
+  document.body.classList.add('rec', 'embed');
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { if (!reduce) playing = e.isIntersecting; }).observe(document.body);
+  }
+  document.addEventListener('visibilitychange', () => { if (!reduce) playing = !document.hidden; });
+}
+if (new URLSearchParams(location.search).get('format') === '9x16') [W, H] = [1080, 1920];
+if (!playing) $('#bPlay').textContent = 'Reproduzir';
+fit(); restart();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -17,6 +17,8 @@ export type CaseData = {
   title: string;
   summary: string;
   bullets: string[];
+  /** Página HTML (em public/) exibida em iframe no lugar da capa do card na home. */
+  coverEmbed?: string;
   /** A primeira imagem da galeria é a capa do card na home. */
   gallery: CaseImage[];
   intro: string;

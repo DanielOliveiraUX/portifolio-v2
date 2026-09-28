@@ -7,14 +7,24 @@ export function FeaturedProject({ project, priority = false }: { project: Projec
   return (
     <article id={project.slug} className={s.card}>
       <div className={s.media}>
-        <Image
-          src={project.cover.src}
-          alt={project.cover.alt}
-          fill
-          sizes="(max-width: 899px) 100vw, 45vw"
-          className={s.image}
-          priority={priority}
-        />
+        {project.coverEmbed ? (
+          <iframe
+            src={project.coverEmbed}
+            title={project.cover.alt || project.title}
+            className={s.embed}
+            loading={priority ? "eager" : "lazy"}
+            tabIndex={-1}
+          />
+        ) : (
+          <Image
+            src={project.cover.src}
+            alt={project.cover.alt}
+            fill
+            sizes="(max-width: 899px) 100vw, 45vw"
+            className={s.image}
+            priority={priority}
+          />
+        )}
       </div>
 
       <div className={s.body}>
