@@ -8,16 +8,26 @@ export function ProjectCard({ project, headingLevel = "h3" }: { project: Project
   return (
     <article className={s.card}>
       <div className={s.media}>
-        {project.coverEmbed ? (
+        {/* a imagem de capa fica sempre por baixo: se a animação não carregar, ela aparece */}
+        <Image
+          src={project.cover.src}
+          alt={project.coverEmbed ? "" : project.cover.alt}
+          fill
+          sizes="(max-width: 559px) 100vw, 283px"
+          className={s.image}
+        />
+        {project.coverEmbed && (
           <iframe src={project.coverEmbed} title={project.cover.alt || project.title} className={s.embed} loading="lazy" tabIndex={-1} />
-        ) : (
-          <Image src={project.cover.src} alt={project.cover.alt} fill sizes="(max-width: 559px) 100vw, 283px" className={s.image} />
         )}
       </div>
       <div className={s.body}>
         <div className={s.text}>
           <p className={s.meta}>{project.meta}</p>
-          <Heading className={s.title}>{project.title}</Heading>
+          <Heading className={s.title}>
+            <Link href={`/projetos/${project.slug}`} className={s.titleLink}>
+              {project.title}
+            </Link>
+          </Heading>
           <p className={s.summary}>{project.summary}</p>
         </div>
         <Link href={`/projetos/${project.slug}`} className="pill flair-btn">

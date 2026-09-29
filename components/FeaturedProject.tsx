@@ -7,7 +7,16 @@ export function FeaturedProject({ project, priority = false }: { project: Projec
   return (
     <article id={project.slug} className={s.card}>
       <div className={s.media}>
-        {project.coverEmbed ? (
+        {/* a imagem de capa fica sempre por baixo: se a animação não carregar (ex.: alguns celulares), ela aparece */}
+        <Image
+          src={project.cover.src}
+          alt={project.coverEmbed ? "" : project.cover.alt}
+          fill
+          sizes="(max-width: 899px) 100vw, 45vw"
+          className={s.image}
+          priority={priority}
+        />
+        {project.coverEmbed && (
           <iframe
             src={project.coverEmbed}
             title={project.cover.alt || project.title}
@@ -15,22 +24,17 @@ export function FeaturedProject({ project, priority = false }: { project: Projec
             loading={priority ? "eager" : "lazy"}
             tabIndex={-1}
           />
-        ) : (
-          <Image
-            src={project.cover.src}
-            alt={project.cover.alt}
-            fill
-            sizes="(max-width: 899px) 100vw, 45vw"
-            className={s.image}
-            priority={priority}
-          />
         )}
       </div>
 
       <div className={s.body}>
         <div className={s.text}>
           <p className={s.meta}>{project.meta}</p>
-          <h3 className={s.title}>{project.title}</h3>
+          <h3 className={s.title}>
+            <Link href={`/projetos/${project.slug}`} className={s.titleLink}>
+              {project.title}
+            </Link>
+          </h3>
           <p className={s.summary}>{project.summary}</p>
           <ul className={s.bullets}>
             {project.bullets.map((b) => (

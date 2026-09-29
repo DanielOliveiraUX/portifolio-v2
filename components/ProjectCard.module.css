@@ -80,3 +80,14 @@
     padding: 24px 20px 28px;
   }
 }
+
+/* título como link para o projeto; sem mudar a aparência */
+.titleLink {
+  color: inherit;
+}
+
+.titleLink:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.12em;
+}
