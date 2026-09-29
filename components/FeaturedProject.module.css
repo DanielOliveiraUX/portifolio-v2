@@ -7,7 +7,9 @@
   background: var(--black-2);
   border-radius: var(--radius);
   overflow: hidden;
-  scroll-margin-top: calc(var(--header-h) + 72px);
+  /* o html já aplica scroll-padding-top (header + 16px); aqui entra só a altura do menu de abas
+     fixo (~59,5px), para a seção verde sair de vista ao clicar em "Projeto 01" */
+  scroll-margin-top: 59px;
 }
 
 .media {
@@ -83,7 +85,8 @@
   .card {
     grid-template-columns: 1fr;
     padding-right: 0;
-    scroll-margin-top: calc(var(--header-h) + 120px);
+    /* no mobile o menu fixo tem duas linhas (~119px) */
+    scroll-margin-top: 119px;
   }
 
   .media {

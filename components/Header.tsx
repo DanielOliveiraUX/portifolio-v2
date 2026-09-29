@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { DanielMark } from "./NameMark";
 import s from "./Header.module.css";
 
 const links = [
@@ -25,8 +24,13 @@ export function Header() {
   return (
     <header className={s.header} data-open={open}>
       <div className={`container ${s.inner}`}>
-        <Link href="/" className={s.logo} aria-label="Daniel Oliveira, página inicial" onClick={() => setOpen(false)}>
-          <DanielMark />
+        <Link
+          href="/"
+          className={`flair-btn ${s.logo}`}
+          aria-label="Daniel Oliveira, página inicial"
+          onClick={() => setOpen(false)}
+        >
+          <span className="flair" aria-hidden="true" />
         </Link>
 
         <nav className={s.nav} aria-label="Principal">

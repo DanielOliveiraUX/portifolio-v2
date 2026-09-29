@@ -84,16 +84,17 @@
       ]
     },
     {
-      "slug": "projeto-02",
+      "slug": "hora-extra",
       "featured": true,
-      "meta": "France · Global · 2024–2026",
-      "title": "Veepee · Design System Lead",
-      "summary": "Scaling a multi-brand e-commerce ecosystem through governance, systems, and AI-assisted workflows.",
+      "meta": "Operações · Automação de processo",
+      "title": "Menos hora extra, mais eficiência",
+      "summary": "Um processo manual que consumia horas extras toda semana virou uma rotina de uma pessoa só, sem novo fornecedor e sem custo de licença.",
       "bullets": [
-        "Led Design System governance across multiple product and dev teams",
-        "Reduced design-to-dev friction through good documentation and UX practices",
-        "Facilitated stakeholder alignment in complex, multi-team environments"
+        "Identifiquei a causa do problema no fluxo, não no esforço da equipe: um processo manual sem suporte do sistema contratado",
+        "Escolhi construir com as ferramentas que a empresa já tinha, no lugar de esperar o fornecedor ou contratar outro software",
+        "Zerei as horas extras do processo e gerei economia de mais de R$ 14 mil por ano, com a rotina documentada e transferida para o time"
       ],
+      "coverEmbed": "/motion/disparador-motion.html?embed",
       "gallery": [
         {
           "src": "/images/placeholder.jpg",
@@ -108,22 +109,14 @@
           "alt": ""
         }
       ],
-      "intro": "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
+      "intro": "Toda semana, três pessoas ficavam além do horário para enviar, uma a uma, e-mails com dados pessoais de cada comprador. O sistema administrativo contratado não oferecia automação e o fornecedor não pretendia criar uma.\nComo PM, meu trabalho foi tratar isso como um problema de negócio, com custo recorrente e prazo para resolver:\n\nEliminar o gargalo com o menor investimento possível e deixar a equipe independente para operar a solução.",
       "sections": [
         {
           "id": "visao-geral",
           "title": "Visão geral",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
-          ]
-        },
-        {
-          "id": "contexto-do-negocio",
-          "title": "Contexto do negócio",
-          "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Após cada venda finalizada, a empresa precisava enviar ao comprador um e-mail com informações pessoais dele. O processo era totalmente manual: exigia no mínimo três colaboradores e gerava horas extras semanais para todos eles.",
+            "O custo aparecia em três lugares: na folha, com horas extras recorrentes, no desgaste de uma equipe pressionada a terminar rápido e na qualidade do envio ao cliente. Era uma oportunidade clara de reduzir custo operacional e devolver tempo ao time."
           ],
           "image": {
             "src": "/images/placeholder.jpg",
@@ -131,27 +124,44 @@
           }
         },
         {
+          "id": "contexto-do-negocio",
+          "title": "Contexto do negócio",
+          "paragraphs": [
+            "Percebi o tamanho do problema quando cobri a função de um colega em período de licença. Ao executar a tarefa, vi de perto o tempo gasto, o cansaço e a pressão sobre o time. Conversei com quem fazia o processo todo dia e confirmei que aquela rotina não se sustentava.",
+            "O sistema administrativo da empresa não tinha recurso para esse tipo de automação, e o fornecedor não demonstrou interesse em desenvolvê-lo. Isso definiu as restrições: a solução precisava nascer fora do sistema principal, custar pouco e não depender de integrações complexas."
+          ]
+        },
+        {
           "id": "pesquisa-e-descoberta",
           "title": "Pesquisa e descoberta",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Mapeei o fluxo completo com conversas com as pessoas envolvidas, observação da rotina real e análise de como os registros saíam do sistema até virarem cada e-mail individual.",
+            "O mapa mostrou onde o tempo se perdia: o trabalho repetitivo estava na montagem e no envio de cada mensagem, não na decisão do que enviar. Isso indicava um processo bom para automatizar, com regras claras e dados que já existiam."
           ]
         },
         {
           "id": "decisoes-chave",
           "title": "Decisões-chave",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Comparei os caminhos possíveis: esperar o fornecedor, contratar uma solução SaaS ou construir internamente. A primeira dependia de quem já tinha se mostrado desinteressado, e a segunda exigia investimento e um novo fornecedor para um problema específico. Optei por construir com as ferramentas que a empresa já usava.",
+            "Desenvolvi, junto com o Luan Borges, uma planilha automatizada com VBScript. Ela lê os dados essenciais exportados do sistema, preenche os campos de cada e-mail e dispara todos os envios de uma só vez.",
+            "Tratei a adoção como parte do escopo. A entrega incluiu um guia passo a passo e um treinamento com o time, para que qualquer pessoa conseguisse executar a rotina sem depender de quem a construiu."
           ]
         },
         {
           "id": "o-que-foi-entregue",
           "title": "O que foi entregue",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Um processo que exigia três pessoas e horas extras semanais passou a ser executado por um único colaborador, dentro do horário normal. Com isso, as horas extras do processo foram zeradas e a empresa passou a economizar mais de R$ 14 mil por ano, considerando só o custo das horas extras e sem contar transporte, alimentação ou outros custos.",
+            "Os envios ficaram mais rápidos e o time ganhou tempo e menos pressão para trabalhar. O comprador passou a receber a informação com mais agilidade, o que melhorou a experiência dele."
+          ]
+        },
+        {
+          "id": "aprendizados",
+          "title": "Aprendizados",
+          "paragraphs": [
+            "A melhor solução nem sempre é a mais sofisticada. Com o fornecedor sem interesse em resolver, usar o que já existia entregou resultado rápido e sem novos custos. Melhorias pequenas em processos recorrentes têm impacto financeiro direto e medível.",
+            "Ouvir as pessoas que executam o trabalho foi o que tornou a solução certa. Uma equipe motivada e envolvida desde o início também acelerou a entrega e garantiu que a rotina continuasse funcionando depois dela."
           ]
         }
       ]

@@ -81,8 +81,9 @@
 .about {
   display: flex;
   align-items: center;
-  min-height: 80vh;
-  min-height: 80svh;
+  /* tela cheia: a seção fica presa enquanto o texto é revelado pela rolagem */
+  min-height: 100vh;
+  min-height: 100svh;
   background: var(--lime);
   color: var(--ink);
 }
@@ -90,14 +91,22 @@
 .aboutInner {
   display: flex;
   flex-direction: column;
-  gap: 0.9em;
+  gap: 1.1em;
   width: 100%;
   padding-block: clamp(56px, 7vw, 112px);
   font-family: var(--font-display);
   /* limitado também pela altura da tela, para o bloco não passar da seção */
-  font-size: clamp(20px, min(2.2vw, 3.6vh), 40px);
-  line-height: 1.14;
+  font-size: clamp(28px, min(3.6vw, 5.4vh), 56px);
+  line-height: 1.3;
   letter-spacing: -0.02em;
+}
+
+.aboutInner {
+  text-align: center;
+}
+
+.aboutInner strong {
+  font-weight: 700;
 }
 
 .aboutLine {

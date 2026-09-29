@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Disparador de Emails · tour do produto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* tokens do repositório (Projeto/static/index.html) */
+  --bg:#0f1117; --surface:#181c27; --surface2:#1e2333; --border:#2a3047; --border2:#374060;
+  --accent:#4f8ef7; --accent2:#6fa8ff; --green:#34d399; --yellow:#fbbf24; --red:#f87171;
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b; --radius:12px; --radius-sm:8px;
+  --page:#e7e7eb; --chrome-fg:#1a1c22; --chrome-btn:#ffffff; --chrome-line:#cfd0d6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--page:#050608;--chrome-fg:#c4c4c4;--chrome-btn:#12141b;--chrome-line:#21242a;}
+}
+:root[data-theme="dark"]{--page:#050608;--chrome-fg:#c4c4c4;--chrome-btn:#12141b;--chrome-line:#21242a;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--chrome-fg);font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+body.embed{background:transparent}
+#app{height:100%;display:flex;flex-direction:column}
+#viewport{flex:1;min-height:0;position:relative;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;transform-origin:center;overflow:hidden;border-radius:14px;color:var(--text);
+  background:radial-gradient(ellipse at 50% 50%,#161c30 0%,#07080b 70%)}
+body.rec #stage{border-radius:0}
+#world{position:absolute;left:0;top:0;width:1280px;height:880px;transform-origin:0 0;will-change:transform}
+#cursor{position:absolute;left:0;top:0;width:34px;height:40px;transform-origin:0 0;pointer-events:none;z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
+#ov{position:absolute;left:0;top:0;z-index:3;pointer-events:none}
+#drag{position:absolute;left:0;top:0;z-index:4;pointer-events:none;display:flex;align-items:center;gap:8px;white-space:nowrap;
+  background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:8px 12px;font:500 12px "DM Mono",ui-monospace,monospace;color:var(--text);
+  box-shadow:0 14px 30px -8px rgba(0,0,0,.6)}
+.ripple{position:absolute;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;border:2px solid rgba(255,255,255,.75);
+  pointer-events:none;animation:rip .45s ease-out forwards;z-index:4}
+@keyframes rip{from{transform:scale(.2);opacity:1}to{transform:scale(1);opacity:0}}
+
+/* ---------- a aplicação (fiel ao repositório) ---------- */
+#screen{position:absolute;left:0;top:0;width:1280px;height:880px;background:var(--bg);display:grid;grid-template-columns:260px 1fr;
+  border-radius:16px;overflow:hidden;font-size:15px;color:var(--text);
+  box-shadow:0 0 0 1px var(--border),0 60px 160px -40px rgba(79,142,247,.3),0 40px 100px -20px rgba(0,0,0,.85)}
+[data-r]{transition:opacity .5s ease,filter .5s ease}
+.hid{opacity:0!important;filter:blur(10px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:32px 0;display:flex;flex-direction:column;height:880px}
+.logo{padding:0 28px 32px;border-bottom:1px solid var(--border)}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.logo h1{font-size:16px;font-weight:600;margin:0}
+.logo p{font-size:12px;color:var(--text3);margin:2px 0 0}
+.steps-nav{padding:24px 0;flex:1}
+.step-item{display:flex;align-items:center;gap:14px;padding:12px 28px;position:relative;transition:background .2s,opacity .5s,filter .5s}
+.step-item.active{background:var(--surface2)}
+.step-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:0 2px 2px 0}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;
+  background:var(--surface2);border:1.5px solid var(--border2);color:var(--text3);flex-shrink:0;transition:all .25s}
+.step-item.active .step-num{background:var(--accent);border-color:var(--accent);color:#fff}
+.step-item.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step-num.pop{animation:pop .45s cubic-bezier(.3,1.8,.5,1)}
+@keyframes pop{0%{transform:scale(.4)}100%{transform:scale(1)}}
+.step-label{font-size:13.5px;font-weight:500;color:var(--text2)}
+.step-item.active .step-label{color:var(--text)}
+.sidebar-footer{padding:20px 28px;border-top:1px solid var(--border);font-size:11px;color:var(--text3)}
+.main{padding:48px 56px;max-width:932px;overflow:hidden}
+.page{display:none}
+.page.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page-header{margin-bottom:36px}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+  background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);padding:4px 10px;border-radius:20px;margin-bottom:14px}
+.page-header h2{font-size:26px;font-weight:600;margin:0 0 8px}
+.page-header p{color:var(--text2);line-height:1.6;margin:0}
+.page-header code{font-family:"DM Mono",ui-monospace,monospace;color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.card-title{font-size:13px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:8px}
+.inp{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:11px 14px;font-size:14px;height:43px;
+  display:flex;align-items:center;transition:border-color .15s}
+.inp.focus{border-color:var(--accent)}
+.tx{color:var(--text3)}
+.tx.typed{color:var(--text)}
+.caret{display:inline-block;width:1.5px;height:17px;background:var(--accent);margin-left:1px;opacity:0}
+.inp.focus .caret{animation:blink 1s steps(1) infinite}
+@keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+.hint{font-size:12px;color:var(--text3);margin-top:6px}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--radius);padding:40px 24px;text-align:center;transition:all .2s}
+.drop-zone.drag-over{border-color:var(--accent);background:rgba(79,142,247,.05);transform:scale(1.01)}
+.drop-icon{font-size:32px;margin-bottom:12px}
+.drop-zone h3{font-size:15px;font-weight:500;margin:0 0 6px}
+.drop-zone p{font-size:13px;color:var(--text3);margin:0}
+.btn-browse{display:inline-block;margin-top:14px;padding:8px 18px;border-radius:6px;background:var(--surface2);border:1px solid var(--border2);font-size:13px;font-weight:500;color:var(--accent)}
+.file-list{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.file-item{display:flex;align-items:center;gap:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;animation:fadeUp .25s ease both}
+.card .file-item+.file-item{margin-top:8px}
+.fi-icon{font-size:18px;flex-shrink:0}
+.fi-name{font-size:13px;font-family:"DM Mono",ui-monospace,monospace;flex:1}
+.fi-size{font-size:11px;color:var(--text3)}
+.fi-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+.fi-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.fi-warn{background:rgba(251,191,36,.12);color:var(--yellow)}
+.editor-toolbar{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm) var(--radius-sm) 0 0;padding:8px 10px}
+.toolbar-btn{width:30px;height:30px;border-radius:5px;color:var(--text2);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.toolbar-btn.active{background:rgba(79,142,247,.15);color:var(--accent)}
+.toolbar-sep{width:1px;background:var(--border2);margin:3px 4px}
+.toolbar-select{color:var(--text2);font-size:13px;padding:0 6px;height:30px;display:flex;align-items:center}
+#editor{min-height:180px;background:var(--surface2);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);padding:16px;font-size:14px;line-height:1.7}
+#editor p{margin:0 0 10px}
+.sel{background:rgba(79,142,247,.35);border-radius:2px}
+.preview-list{display:flex;flex-direction:column;gap:12px}
+.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s;animation:fadeUp .25s ease both}
+.preview-card.hov{border-color:var(--border2)}
+.preview-head{display:flex;align-items:center;gap:14px;padding:14px 18px}
+.preview-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff;flex-shrink:0}
+.preview-info{flex:1;min-width:0}
+.preview-name{font-size:14px;font-weight:500}
+.preview-email{font-size:12px;color:var(--text3);margin-top:1px}
+.preview-badge{font-size:11px;font-weight:600;background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.2);padding:3px 10px;border-radius:12px;flex-shrink:0}
+.preview-body{max-height:0;overflow:hidden;padding:0 18px;border-top:1px solid transparent;transition:max-height .45s cubic-bezier(.2,.9,.3,1),padding .45s,border-color .3s}
+.preview-body.open{max-height:160px;padding:0 18px 16px;border-top-color:var(--border)}
+.preview-row{display:flex;gap:8px;margin-top:10px;font-size:13px}
+.preview-row .lbl{color:var(--text3);width:68px;flex-shrink:0}
+.attachments{display:flex;flex-wrap:wrap;gap:6px}
+.att-chip{font-size:11px;font-family:"DM Mono",ui-monospace,monospace;background:var(--surface2);border:1px solid var(--border2);padding:3px 10px;border-radius:4px;color:var(--text2)}
+.progress-wrap{margin:16px 0}
+.progress-bar-bg{background:var(--surface2);border-radius:100px;height:8px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:100px;width:0%}
+.progress-stats{display:flex;gap:20px;margin-top:12px}
+.stat-pill{display:flex;align-items:center;gap:6px;font-size:13px}
+.stat-dot{width:8px;height:8px;border-radius:50%}
+.log-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;height:172px;overflow:hidden;
+  font-family:"DM Mono",ui-monospace,monospace;font-size:12px;line-height:1.8;margin-top:16px;display:flex;flex-direction:column;justify-content:flex-end}
+.log-ok{color:var(--green)} .log-warn{color:var(--yellow)} .log-info{color:var(--text2)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary.press{background:var(--accent2);transform:scale(.96)}
+.btn-secondary{background:var(--surface2);border:1px solid var(--border2);color:var(--text)}
+.btn-big{padding:14px 32px;font-size:15px}
+.btn-row{display:flex;gap:12px;margin-top:28px}
+.btn[disabled]{opacity:.45}
+.info-strip{display:flex;align-items:center;gap:10px;background:rgba(79,142,247,.07);border:1px solid rgba(79,142,247,.15);border-radius:var(--radius-sm);padding:12px 16px;font-size:13px;color:var(--text2);margin-bottom:20px;animation:fadeUp .25s ease both}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0 0}
+.summary-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center}
+.sval{font-size:28px;font-weight:600;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.slbl{font-size:12px;color:var(--text3)}
+.alert{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;animation:fadeUp .25s ease both}
+.alert-warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:var(--yellow)}
+.alert-ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.2);color:var(--green)}
+
+/* ---------- controles ---------- */
+#bar{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;padding:12px 16px}
+#bar button{font:500 13px "DM Sans",system-ui,sans-serif;background:var(--chrome-btn);color:var(--chrome-fg);border:1px solid var(--chrome-line);border-radius:8px;padding:8px 12px;cursor:pointer}
+#bar button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+#bar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#bar .sep{width:1px;height:22px;background:var(--chrome-line);margin:0 4px}
+#bar .hint{font-size:12px;opacity:.7;margin-left:6px}
+body.rec #bar{display:none}
+#note{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(18,20,27,.92);color:#c4c4c4;font-size:13px;padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .4s;pointer-events:none}
+#note.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="viewport">
+    <div id="stage">
+      <div id="world"></div>
+      <svg id="cursor" viewBox="0 0 20 26" aria-hidden="true">
+        <path d="M1.5 1.5 L1.5 21.5 L6.8 16.6 L10.4 24.6 L13.9 23.1 L10.4 15.2 L17.6 15.2 Z" fill="#fff" stroke="#0b0c10" stroke-width="1.4" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+  <div id="bar" role="toolbar" aria-label="Controles da animação">
+    <button id="bPlay">Pausar</button>
+    <button id="bRestart">Reiniciar</button>
+    <span class="sep"></span>
+    <button id="b169" aria-pressed="true">16:9</button>
+    <button id="b916" aria-pressed="false">9:16</button>
+    <span class="sep"></span>
+    <button id="bSound" aria-pressed="false">Batida 120 BPM</button>
+    <button id="bRec">Modo gravação</button>
+    <span class="hint">Espaço pausa · R reinicia · Esc sai do modo gravação</span>
+  </div>
+</div>
+<div id="note">Modo gravação · Esc para sair</div>
+
+<script>
+(() => {
+const BEAT = 500, LOOP = 54; // 120 BPM · 27 s
+const SW = 1280, SH = 880;
+const $ = s => document.querySelector(s);
+const stage = $('#stage'), world = $('#world'), cursorEl = $('#cursor');
+let W = 1920, H = 1080, screen = null, ov = null, drag = null;
+
+/* ---------- molas ---------- */
+const Spring = (v, k = 260, c = 24) => ({ v, t: v, vel: 0, k, c });
+const step = (s, dt) => { const f = -s.k * (s.v - s.t) - s.c * s.vel; s.vel += f * dt; s.v += s.vel * dt; };
+const snap = (s, v) => { s.v = s.t = v; s.vel = 0; };
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const cam = { x: Spring(SW / 2, 60, 15.5), y: Spring(SH / 2, 60, 15.5), lz: Spring(0, 60, 15.5) };
+const cur = { x: Spring(0, 150, 24), y: Spring(0, 150, 24), s: Spring(1, 700, 32), o: Spring(0, 220, 28) };
+const ovs = { w: Spring(24), h: Spring(24), r: Spring(12), o: Spring(1, 260, 30), cr: Spring(79, 200, 26), cg: Spring(142, 200, 26), cb: Spring(247, 200, 26) };
+const dragO = Spring(0, 300, 30);
+let ovC = { x: 0, y: 0 };
+const springs = () => [...Object.values(cam), ...Object.values(cur), ...Object.values(ovs), dragO];
+const zFull = () => Math.min(W / SW, H / SH) * (H > W ? .92 : .86);
+
+/* ---------- dados de exemplo ---------- */
+const NOMES = ['Ana Beatriz Souza', 'Carlos Henrique Lima', 'Fernanda Rocha', 'Marcos Vinícius Alves', 'Juliana Castro', 'Rafael Monteiro',
+  'Patrícia Gomes', 'Eduardo Nogueira', 'Camila Duarte', 'Thiago Barros', 'Luciana Freitas', 'Bruno Carvalho'];
+const IDS = ['027123', '027145', '027188', '027201', '027236', '027259', '027274', '027290', '027312', '027338', '027351', '027377'];
+const mail = n => n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().split(' ').filter((_, i, a) => i === 0 || i === a.length - 1).join('.') + '@email.com';
+const TOTAL = 48, DATA = '15/10/2026', CC = 'controle@leilao.com.br';
+const STEPS = ['Configurações', 'Planilha de Clientes', 'Arquivos PDF', 'Corpo do Email', 'Preview', 'Disparar'];
+
+/* ---------- montagem da tela ---------- */
+function screenHTML() {
+  return `<div id="screen">
+  <aside class="sidebar">
+    <div class="logo"><div id="logoIcon" class="logo-icon hid" data-r="0">📨</div><h1 class="hid" data-r=".5">Disparador</h1><p class="hid" data-r=".7">Envio de documentos · Leilão</p></div>
+    <nav class="steps-nav">${STEPS.map((l, i) => `<div class="step-item ${i === 0 ? 'active' : ''} hid" data-r="${1 + i * .3}" data-step="${i + 1}"><div class="step-num" id="sn${i + 1}">${i + 1}</div><span class="step-label">${l}</span></div>`).join('')}</nav>
+    <div class="sidebar-footer hid" data-r="3">Disparador de Emails v2.0<br>Gmail API · OAuth2</div>
+  </aside>
+  <main class="main">
+    <section class="page active" id="page1">
+      <div class="page-header hid" data-r="2"><div class="tag">⚙️ Etapa 1</div><h2>Configurações do Disparo</h2><p>Defina a data do leilão e o email que receberá cópia de todos os envios.</p></div>
+      <div id="p1wrap">
+        <div class="card hid" data-r="2.6"><div class="card-title">Informações do Leilão</div>
+          <div class="row-2">
+            <div class="field"><label>📅 Data do Leilão</label><div class="inp" id="fData"><span class="tx">DD/MM/AAAA</span><i class="caret"></i></div><div class="hint">Formato: DD/MM/AAAA</div></div>
+            <div class="field"><label>📧 Email de Controle (CC)</label><div class="inp" id="fCC"><span class="tx">controle@empresa.com</span><i class="caret"></i></div><div class="hint">Receberá cópia de todos os emails</div></div>
+          </div></div>
+        <div class="btn-row hid" data-r="3.1"><span class="btn btn-primary" id="bSalvar">Salvar e Continuar →</span></div>
+      </div>
+    </section>
+    <section class="page" id="page2">
+      <div class="page-header"><div class="tag">📊 Etapa 2</div><h2>Planilha de Clientes</h2><p>Carregue o arquivo <code>clientes.xlsx</code> com as abas <strong>Configuracoes</strong> e <strong>Clientes</strong>.</p></div>
+      <div class="drop-zone" id="dropPlanilha"><div class="drop-icon">📋</div><h3>Arraste a planilha aqui</h3><p>Ou clique para selecionar</p><span class="btn-browse">Procurar arquivo</span></div>
+      <div id="planilhaResult" style="margin-top:16px"></div>
+      <div class="btn-row" id="p2btns"><span class="btn btn-secondary">← Voltar</span><span class="btn btn-primary" id="bNext2" disabled>Continuar →</span></div>
+    </section>
+    <section class="page" id="page3">
+      <div class="page-header"><div class="tag">📎 Etapa 3</div><h2>Arquivos PDF</h2><p>Carregue os PDFs no padrão <code>MV6 USUARIO 027123.pdf</code></p></div>
+      <div class="drop-zone" id="dropPDFs"><div class="drop-icon">📁</div><h3>Arraste os PDFs aqui</h3><p>Múltiplos arquivos · Padrão: EVENTO USUARIO ID.pdf</p><span class="btn-browse">Selecionar arquivos</span></div>
+      <div id="pdfResult" style="margin-top:16px"></div>
+      <div class="file-list" id="pdfList"></div>
+      <div class="btn-row" id="p3btns"><span class="btn btn-secondary">← Voltar</span><span class="btn btn-primary" id="bNext3" disabled>Continuar →</span></div>
+    </section>
+    <section class="page" id="page4">
+      <div class="page-header"><div class="tag">✍️ Etapa 4</div><h2>Corpo do Email</h2><p>Escreva a mensagem que todos os clientes receberão. Use a barra de ferramentas para formatar.</p></div>
+      <div class="card" id="editorCard" style="padding:0;overflow:hidden">
+        <div class="editor-toolbar"><span class="toolbar-btn" id="tbB"><b>B</b></span><span class="toolbar-btn"><i>I</i></span><span class="toolbar-btn"><u>U</u></span><span class="toolbar-sep"></span>
+          <span class="toolbar-select">Tamanho ▾</span><span class="toolbar-sep"></span><span class="toolbar-btn">☰</span><span class="toolbar-btn">⬅</span><span class="toolbar-btn">⬌</span>
+          <span class="toolbar-sep"></span><span class="toolbar-btn">🔗</span><span class="toolbar-btn">🖼️</span><span class="toolbar-sep"></span><span class="toolbar-btn">✕</span></div>
+        <div id="editor"><p>Olá,</p><p>Segue em anexo os documentos referentes ao(s) leilão(ões) de sua participação.</p><p>Caso tenha alguma dúvida, não hesite em nos contatar.</p>
+          <p>Atenciosamente,<br><strong id="sig1">[Seu Nome]</strong><br><span id="sig2">[Empresa] · [Telefone]</span></p></div>
+      </div>
+      <div class="btn-row" id="p4btns"><span class="btn btn-secondary">← Voltar</span><span class="btn btn-primary" id="bPrev">Ver Preview →</span></div>
+    </section>
+    <section class="page" id="page5">
+      <div class="page-header"><div class="tag">👁️ Etapa 5</div><h2>Preview dos Emails</h2><p>Confira como cada email será enviado antes de disparar.</p></div>
+      <div id="previewInfo"></div><div class="preview-list" id="previewList"></div>
+      <div class="btn-row" id="p5btns"><span class="btn btn-secondary">← Voltar</span><span class="btn btn-primary btn-big" id="bIr">🚀 Ir para Disparo →</span></div>
+    </section>
+    <section class="page" id="page6">
+      <div class="page-header"><div class="tag">🚀 Etapa 6</div><h2>Disparar Emails</h2><p>Tudo pronto! Revise o resumo abaixo e clique em Disparar.</p></div>
+      <div class="card" id="resumoFinal"><div class="card-title">Resumo do Disparo</div><div class="summary-grid">
+        <div class="summary-box"><div class="sval" style="color:var(--green)">${TOTAL}</div><div class="slbl">Emails a enviar</div></div>
+        <div class="summary-box"><div class="sval" style="color:var(--accent)">${DATA}</div><div class="slbl">Data do leilão</div></div>
+        <div class="summary-box"><div class="sval" style="font-size:14px;color:var(--text2);line-height:42px">${CC}</div><div class="slbl">Email CC</div></div></div></div>
+      <div class="progress-wrap" id="progressWrap" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:13px;color:var(--text2)" id="progressLabel">Enviando...</span><span style="font-size:13px;font-weight:600" id="progressPct">0%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+        <div class="progress-stats"><div class="stat-pill"><div class="stat-dot" style="background:var(--green)"></div><span id="statOk">0 enviados</span></div>
+          <div class="stat-pill"><div class="stat-dot" style="background:var(--red)"></div><span>0 erros</span></div>
+          <div class="stat-pill"><div class="stat-dot" style="background:var(--yellow)"></div><span id="statSkip">0 sem PDF</span></div></div>
+        <div class="log-box" id="logBox"></div>
+      </div>
+      <div id="summaryResult"></div>
+      <div class="btn-row" id="p6btns"><span class="btn btn-secondary">← Voltar</span><span class="btn btn-primary btn-big" id="bDisparar">🚀 Disparar Emails</span></div>
+    </section>
+  </main>
+</div><div id="ov"></div><div id="drag"></div>`;
+}
+
+/* ---------- utilidades ---------- */
+const el = sel => typeof sel === 'string' ? screen.querySelector(sel) : sel;
+function pos(sel) {
+  const e = el(sel); if (!e) return { x: SW / 2, y: SH / 2, w: 0, h: 0 };
+  const r = e.getBoundingClientRect(), s = screen.getBoundingClientRect(), k = s.width / SW;
+  return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
+}
+const add = (sel, c) => el(sel)?.classList.add(c);
+const rem = (sel, c) => el(sel)?.classList.remove(c);
+const setOv = h => { const [r, g, b] = hex(h); ovs.cr.t = r; ovs.cg.t = g; ovs.cb.t = b; };
+function goStep(n) {
+  screen.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  screen.querySelectorAll('.step-item').forEach(s => s.classList.remove('active'));
+  add('#page' + n, 'active'); add(`[data-step="${n}"]`, 'active');
+}
+function markDone(n) {
+  const sn = el('#sn' + n); if (!sn) return;
+  sn.textContent = '✓'; sn.classList.remove('pop'); void sn.offsetWidth; sn.classList.add('pop');
+  add(`[data-step="${n}"]`, 'done');
+}
+function typeInto(sel, str, p) {
+  const t = el(sel)?.querySelector('.tx'); if (!t) return;
+  if (!t.dataset.ph) t.dataset.ph = t.textContent;
+  const s = str.slice(0, Math.round(str.length * p));
+  t.textContent = s || t.dataset.ph; t.classList.toggle('typed', !!s);
+}
+function press(sel) { add(sel, 'press'); setTimeout(() => rem(sel, 'press'), 160); }
+
+/* ---------- linha do tempo (em batidas) ---------- */
+const events = [], tweens = [];
+const ev = (b, fn) => events.push({ t: b * BEAT, fn, done: false });
+const easeOut = p => 1 - Math.pow(1 - p, 3);
+const easeInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const lin = p => p;
+const tw = (b0, b1, fn, ease = easeOut) => tweens.push({ t0: b0 * BEAT, t1: b1 * BEAT, fn, ease, done: false });
+const camTo = (b, sel, z, dx = 0, dy = 0) => ev(b, () => {
+  if (sel === 'full') { cam.x.t = SW / 2; cam.y.t = SH / 2; cam.lz.t = Math.log(zFull()); return; }
+  const p = pos(sel); cam.x.t = p.x + p.w / 2 + dx; cam.y.t = p.y + p.h / 2 + dy; cam.lz.t = Math.log(z);
+});
+const curTo = (b, sel, ax = .5, ay = .5, dx = 0, dy = 0) => ev(b, () => {
+  const p = pos(sel); cur.x.t = p.x + p.w * ax + dx; cur.y.t = p.y + p.h * ay + dy; cur.o.t = 1;
+});
+const click = (b, fn) => { ev(b, () => { cur.s.t = .8; ripple(); fn && fn(); }); ev(b + .2, () => { cur.s.t = 1; }); };
+function ripple() {
+  const r = document.createElement('div'); r.className = 'ripple';
+  r.style.left = (cur.x.v + 3) + 'px'; r.style.top = (cur.y.v + 3) + 'px';
+  world.appendChild(r); setTimeout(() => r.remove(), 500);
+}
+
+// abertura: o ponto vira o ícone do Disparador e a câmera revela o app
+ev(.5, () => { ovs.w.t = 40; ovs.h.t = 40; ovs.r.t = 10; });
+ev(1.5, () => { rem('#logoIcon', 'hid'); ovs.o.t = 0; });
+camTo(2.5, 'full');
+tw(2.5, 4, p => screen.querySelectorAll('.hid').forEach(e => { if (+e.dataset.r <= p * 3.3) e.classList.remove('hid'); }), lin);
+curTo(3.75, '#fData', .7, 1.6);
+
+// etapa 1 · configurações
+camTo(5, '#p1wrap', 1.7);
+curTo(5.25, '#fData', .3, .55);
+click(6, () => add('#fData', 'focus'));
+tw(6.25, 7.25, p => typeInto('#fData', DATA, p), lin);
+curTo(7.5, '#fCC', .3, .55);
+click(8.25, () => { rem('#fData', 'focus'); add('#fCC', 'focus'); });
+tw(8.5, 9.75, p => typeInto('#fCC', CC, p), lin);
+curTo(10, '#bSalvar', .6, .6);
+click(10.75, () => { rem('#fCC', 'focus'); press('#bSalvar'); markDone(1); });
+ev(11.1, () => goStep(2));
+
+// etapa 2 · planilha arrastada para a área de upload
+camTo(11.5, '#dropPlanilha', 1.55, 60, 30);
+curTo(11.5, '#dropPlanilha', 1.12, .5);
+ev(12.25, () => { drag.innerHTML = '📋 clientes.xlsx'; dragO.t = 1; });
+curTo(12.5, '#dropPlanilha', .5, .5);
+ev(13.25, () => add('#dropPlanilha', 'drag-over'));
+click(13.75, () => { dragO.t = 0; rem('#dropPlanilha', 'drag-over'); el('#planilhaResult').innerHTML = '<div class="alert alert-warn">⏳ Processando planilha...</div>'; });
+ev(14.5, () => {
+  el('#planilhaResult').innerHTML = `<div class="alert alert-ok">✅ Planilha carregada com sucesso — <strong>${TOTAL} cliente(s)</strong></div>
+    <div class="card"><div class="card-title">Prévia dos clientes</div>${NOMES.slice(0, 3).map((n, i) => `<div class="file-item" style="animation-delay:${i * .07}s"><span class="fi-icon">👤</span><span class="fi-name">${n}</span><span class="fi-size">${mail(n)}</span><span class="fi-status fi-ok">ID ${IDS[i]}</span></div>`).join('')}
+    <p style="font-size:12px;color:var(--text3);margin:10px 0 0">...e mais ${TOTAL - 3} cliente(s)</p></div>`;
+  el('#bNext2').removeAttribute('disabled'); markDone(2);
+});
+camTo(15, '#planilhaResult', 1.45);
+curTo(15.25, '#planilhaResult .file-item:nth-child(3)', .85, .5);
+camTo(17, '#p2btns', 1.6, 80, -140);
+curTo(17, '#bNext2', .6, .6);
+click(17.75, () => press('#bNext2'));
+ev(18.1, () => goStep(3));
+
+// etapa 3 · PDFs
+camTo(18.5, '#dropPDFs', 1.55, 60, 30);
+curTo(18.5, '#dropPDFs', 1.12, .5);
+ev(19.25, () => { drag.innerHTML = '📁 95 arquivos PDF'; dragO.t = 1; });
+curTo(19.5, '#dropPDFs', .5, .5);
+ev(20.25, () => add('#dropPDFs', 'drag-over'));
+click(20.75, () => { dragO.t = 0; rem('#dropPDFs', 'drag-over'); el('#pdfResult').innerHTML = '<div class="alert alert-warn">⏳ Carregando PDFs...</div>'; });
+ev(21.5, () => {
+  el('#pdfResult').innerHTML = '<div class="alert alert-ok">✅ <strong>94 PDF(s)</strong> carregado(s) com sucesso · 1 ignorado(s)</div>';
+  const files = ['MV6 USUARIO 027123.pdf', 'CRV6 USUARIO 027123.pdf', 'MV6 USUARIO 027145.pdf', 'MV6 USUARIO 027188.pdf'];
+  el('#pdfList').innerHTML = files.map((f, i) => `<div class="file-item" style="animation-delay:${i * .06}s"><span class="fi-icon">📄</span><span class="fi-name">${f}</span><span class="fi-status fi-ok">✓ válido</span></div>`).join('')
+    + `<div class="file-item" style="animation-delay:.4s"><span class="fi-icon">⚠️</span><span class="fi-name">relatorio_final.pdf</span><span class="fi-status fi-warn">fora do padrão</span></div>`;
+  el('#bNext3').removeAttribute('disabled'); markDone(3);
+});
+camTo(22, '#pdfList', 1.4, 0, -20);
+curTo(22.5, '#pdfList .file-item:last-child', .88, .5);
+camTo(24, '#p3btns', 1.6, 80, -140);
+curTo(24, '#bNext3', .6, .6);
+click(24.75, () => press('#bNext3'));
+ev(25.1, () => goStep(4));
+
+// etapa 4 · corpo do email
+camTo(25.5, '#editorCard', 1.55, 0, 20);
+curTo(25.75, '#sig1', .5, .6);
+click(26.5); click(26.75, () => add('#sig1', 'sel'));
+tw(27, 28, p => { const e = el('#sig1'); if (!e) return; const s = 'Daniel Oliveira'; if (p > 0) { e.classList.remove('sel'); e.textContent = s.slice(0, Math.max(1, Math.round(s.length * p))); } }, lin);
+curTo(28.25, '#sig2', .5, .6);
+click(28.75); click(29, () => add('#sig2', 'sel'));
+tw(29.25, 30.25, p => { const e = el('#sig2'); if (!e) return; const s = 'Leilões · (21) 3000-0000'; if (p > 0) { e.classList.remove('sel'); e.textContent = s.slice(0, Math.max(1, Math.round(s.length * p))); } }, lin);
+curTo(30.5, '#bPrev', .6, .6);
+camTo(30.5, '#p4btns', 1.6, 80, -40);
+click(31.25, () => { press('#bPrev'); markDone(4); });
+ev(31.6, () => {
+  goStep(5);
+  el('#previewInfo').innerHTML = `<div class="info-strip"><span>ℹ️</span> <strong>${TOTAL}</strong> email(s) serão disparados · CC: <strong>${CC}</strong></div>`;
+  el('#previewList').innerHTML = NOMES.slice(0, 4).map((n, i) => {
+    const ini = n.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    return `<div class="preview-card" id="pc${i}" style="animation-delay:${i * .07}s"><div class="preview-head"><div class="preview-avatar">${ini}</div>
+      <div class="preview-info"><div class="preview-name">${n}</div><div class="preview-email">${mail(n)}</div></div><div class="preview-badge">2 anexo(s)</div></div>
+      <div class="preview-body"><div class="preview-row"><span class="lbl">Assunto</span><span>Documentos do leilão · ${DATA}</span></div>
+      <div class="preview-row"><span class="lbl">Lotes</span><span>${12 + i * 7}, ${18 + i * 5}</span></div>
+      <div class="preview-row"><span class="lbl">Anexos</span><div class="attachments"><span class="att-chip">📄 MV6 USUARIO ${IDS[i]}.pdf</span><span class="att-chip">📄 CRV6 USUARIO ${IDS[i]}.pdf</span></div></div></div></div>`;
+  }).join('');
+  markDone(5);
+});
+
+// etapa 5 · preview
+camTo(32, '#page5', 1.3, 0, -30);
+curTo(33, '#pc0 .preview-head', .6, .5);
+ev(33.5, () => add('#pc0', 'hov'));
+click(34, () => add('#pc0 .preview-body', 'open'));
+camTo(34.25, '#pc0', 1.85, 0, 70);
+camTo(36, '#p5btns', 1.55, 110, -60);
+curTo(36, '#bIr', .6, .6);
+click(36.75, () => press('#bIr'));
+ev(37.1, () => goStep(6));
+
+// etapa 6 · disparo
+camTo(37.5, '#page6', 1.35, 0, 40);
+curTo(38, '#bDisparar', .6, .6);
+camTo(38.5, '#p6btns', 1.9, 90);
+click(39, () => { press('#bDisparar'); el('#progressWrap').style.display = 'block'; el('#logBox').innerHTML = `<div class="log-info">Iniciando disparo para ${TOTAL} cliente(s)...</div>`; });
+camTo(39.5, '#progressWrap', 1.5);
+ev(39.75, () => { cur.o.t = 0; cur.x.t += 120; cur.y.t += 80; });
+let logged = 0;
+tw(39.75, 45.5, p => {
+  const n = Math.floor(p * TOTAL), skip = (n > 17) + (n > 38), ok = n - skip;
+  const bar = el('#progressBar'); if (!bar) return;
+  bar.style.width = (p * 100) + '%'; el('#progressPct').textContent = Math.round(p * 100) + '%';
+  el('#progressLabel').textContent = `Enviando... ${n} de ${TOTAL}`;
+  el('#statOk').textContent = ok + ' enviados'; el('#statSkip').textContent = skip + ' sem PDF';
+  const box = el('#logBox');
+  while (logged < n) {
+    const i = logged, nome = NOMES[i % NOMES.length], id = IDS[i % IDS.length];
+    box.insertAdjacentHTML('beforeend', (i === 17 || i === 38)
+      ? `<div class="log-warn">Sem PDF: ${nome} (${id})</div>`
+      : `<div class="log-ok">OK ${nome} - ${mail(nome)} - 2 anexo(s)</div>`);
+    logged++;
+  }
+  while (box.children.length > 8) box.firstElementChild.remove();
+}, lin);
+camTo(41.75, '#logBox', 1.9);
+ev(45.75, () => {
+  el('#progressLabel').textContent = 'Concluído!';
+  el('#logBox').insertAdjacentHTML('beforeend', `<div class="log-info">Concluido: ${TOTAL - 2} enviados | 0 erros | 2 sem PDF</div>`);
+  el('#logBox').firstElementChild?.remove();
+  el('#summaryResult').innerHTML = `<div class="alert alert-ok">🎉 Disparo concluído! <strong>${TOTAL - 2} enviados</strong> · 0 erros · 2 sem PDF</div>`;
+  el('#p6btns').style.display = 'none';
+  markDone(6);
+});
+camTo(46, '#summaryResult', 1.8, 0, -40);
+
+// fechamento: app inteiro, todas as etapas concluídas, e volta ao ponto
+camTo(47.5, 'full');
+tw(48, 50.5, p => { cam.lz.t = Math.log(zFull() * (1 + .04 * p)); }, easeInOut);
+camTo(50.75, '#logoIcon', 3.2);
+ev(52, () => {
+  const p = pos('#logoIcon'); ovC = { x: p.x + p.w / 2, y: p.y + p.h / 2 };
+  snap(ovs.w, 40); snap(ovs.h, 40); snap(ovs.r, 10); ovs.o.t = 1;
+  screen.querySelectorAll('[data-r]').forEach(e => e.classList.add('hid'));
+  screen.querySelectorAll('.main .page').forEach(e => { e.style.transition = 'opacity .4s,filter .4s'; e.style.opacity = 0; e.style.filter = 'blur(10px)'; });
+});
+ev(52.75, () => { ovs.w.t = 24; ovs.h.t = 24; ovs.r.t = 12; });
+
+/* ---------- som (batida de referência) ---------- */
+let actx = null, soundOn = false, lastHalf = -1;
+function kick(t) {
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + .14);
+  g.gain.setValueAtTime(.9, t); g.gain.exponentialRampToValueAtTime(.001, t + .3);
+  o.connect(g).connect(actx.destination); o.start(t); o.stop(t + .32);
+}
+function hat(t) {
+  const b = actx.createBuffer(1, Math.floor(actx.sampleRate * .05), actx.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const s = actx.createBufferSource(), f = actx.createBiquadFilter(), g = actx.createGain();
+  s.buffer = b; f.type = 'highpass'; f.frequency.value = 7000;
+  g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + .05);
+  s.connect(f).connect(g).connect(actx.destination); s.start(t);
+}
+
+/* ---------- loop ---------- */
+const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+let playing = !reduce, elapsed = 0, last = performance.now();
+
+function restart() {
+  elapsed = 0; lastHalf = -1; logged = 0;
+  events.forEach(e => e.done = false); tweens.forEach(t => t.done = false);
+  world.innerHTML = screenHTML();
+  screen = $('#screen'); ov = $('#ov'); drag = $('#drag');
+  const p = pos('#logoIcon');
+  ovC = { x: p.x + p.w / 2, y: p.y + p.h / 2 };
+  snap(cam.x, ovC.x); snap(cam.y, ovC.y); snap(cam.lz, Math.log(3.2));
+  snap(ovs.w, 24); snap(ovs.h, 24); snap(ovs.r, 12); snap(ovs.o, 1); snap(dragO, 0);
+  snap(cur.x, ovC.x + 240); snap(cur.y, ovC.y + 160); snap(cur.o, 0); snap(cur.s, 1);
+}
+function runTimeline() {
+  for (const e of events) if (!e.done && elapsed >= e.t) { e.done = true; e.fn(); }
+  for (const t of tweens) {
+    if (t.done || elapsed < t.t0) continue;
+    const p = Math.min(1, (elapsed - t.t0) / (t.t1 - t.t0));
+    t.fn(t.ease(p));
+    if (p >= 1) t.done = true;
+  }
+}
+function render() {
+  const z = Math.exp(cam.lz.v);
+  world.style.transform = `translate(${W / 2 - cam.x.v * z}px,${H / 2 - cam.y.v * z}px) scale(${z})`;
+  cursorEl.style.transform = `translate(${W / 2 + (cur.x.v - cam.x.v) * z}px,${H / 2 + (cur.y.v - cam.y.v) * z}px) scale(${1.2 * cur.s.v})`;
+  cursorEl.style.opacity = Math.max(0, Math.min(1, cur.o.v));
+  if (ov) {
+    const w = Math.max(0, ovs.w.v), h = Math.max(0, ovs.h.v), c = v => Math.round(Math.max(0, Math.min(255, v)));
+    ov.style.width = w + 'px'; ov.style.height = h + 'px';
+    ov.style.transform = `translate(${ovC.x - w / 2}px,${ovC.y - h / 2}px)`;
+    ov.style.borderRadius = Math.max(0, Math.min(ovs.r.v, w / 2, h / 2)) + 'px';
+    ov.style.background = w > 30 ? 'linear-gradient(135deg,#4f8ef7,#7c3aed)' : `rgb(${c(ovs.cr.v)},${c(ovs.cg.v)},${c(ovs.cb.v)})`;
+    ov.style.opacity = Math.max(0, Math.min(1, ovs.o.v));
+  }
+  if (drag) {
+    const o = Math.max(0, Math.min(1, dragO.v));
+    drag.style.opacity = o;
+    drag.style.transform = `translate(${cur.x.v + 14}px,${cur.y.v + 20}px) rotate(${-4 * o}deg) scale(${.9 + .1 * o})`;
+  }
+}
+function frame(now) {
+  const dt = Math.min(now - last, 50); last = now;
+  if (playing) {
+    elapsed += dt;
+    if (elapsed >= LOOP * BEAT) restart();
+    runTimeline();
+    if (soundOn && actx) {
+      const half = Math.floor(elapsed / (BEAT / 2));
+      if (half !== lastHalf) { lastHalf = half; half % 2 ? hat(actx.currentTime) : kick(actx.currentTime); }
+    }
+    const n = 4, hs = dt / 1000 / n;
+    for (let i = 0; i < n; i++) springs().forEach(s => step(s, hs));
+  }
+  render();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- palco e controles ---------- */
+function fit() {
+  const vp = $('#viewport'), rec = document.body.classList.contains('rec');
+  // no embed o palco assume a proporção do iframe, ocupando 100% da altura e da largura
+  if (document.body.classList.contains('embed') && vp.clientWidth && vp.clientHeight) {
+    H = 1080; W = Math.round(H * vp.clientWidth / vp.clientHeight);
+  }
+  const s =Math.min(vp.clientWidth / W, vp.clientHeight / H) * (rec ? 1 : .94);
+  stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  stage.style.transform = `translate(-50%,-50%) scale(${s})`;
+}
+function setFormat(v) {
+  [W, H] = v ? [1080, 1920] : [1920, 1080];
+  $('#b169').setAttribute('aria-pressed', !v); $('#b916').setAttribute('aria-pressed', !!v);
+  fit(); restart();
+}
+function togglePlay() { playing = !playing; $('#bPlay').textContent = playing ? 'Pausar' : 'Reproduzir'; }
+function setRec(on) {
+  document.body.classList.toggle('rec', on); fit();
+  if (on && !document.body.classList.contains('embed')) { const n = $('#note'); n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 1800); }
+}
+$('#bPlay').onclick = togglePlay;
+$('#bRestart').onclick = restart;
+$('#b169').onclick = () => setFormat(0);
+$('#b916').onclick = () => setFormat(1);
+$('#bSound').onclick = () => {
+  soundOn = !soundOn;
+  if (soundOn && !actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { soundOn = false; } }
+  if (actx && actx.state === 'suspended') actx.resume();
+  $('#bSound').setAttribute('aria-pressed', soundOn);
+};
+$('#bRec').onclick = () => setRec(true);
+addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'h' || e.key === 'H') setRec(!document.body.classList.contains('rec'));
+  else if (e.key === 'Escape') setRec(false);
+});
+addEventListener('resize', fit);
+
+/* modo embed: ?embed esconde controles e pausa fora da tela; &format=9x16 abre na vertical */
+const params = new URLSearchParams(location.search);
+if (params.has('embed')) {
+  document.body.classList.add('rec', 'embed');
+  if ('IntersectionObserver' in window) new IntersectionObserver(([e]) => { if (!reduce) playing = e.isIntersecting; }).observe(document.body);
+  document.addEventListener('visibilitychange', () => { if (!reduce) playing = !document.hidden; });
+}
+if (params.get('format') === '9x16') { [W, H] = [1080, 1920]; $('#b169').setAttribute('aria-pressed', false); $('#b916').setAttribute('aria-pressed', true); }
+if (!playing) $('#bPlay').textContent = 'Reproduzir';
+fit(); restart();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

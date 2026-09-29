@@ -11,18 +11,24 @@
   align-items: flex-end;
   justify-content: space-between;
   height: var(--header-h);
-  padding-bottom: 12px;
+  padding-block: 12px;
 }
 
+/* logo branca; a máscara recorta o fundo e o círculo do flair no formato das letras */
 .logo {
-  color: var(--lime);
-  width: 100px;
+  display: block;
+  width: 80px;
+  aspect-ratio: 613 / 265;
+  background: #fff;
+  -webkit-mask: url("/images/daniel-mark.svg") center / 100% 100% no-repeat;
+  mask: url("/images/daniel-mark.svg") center / 100% 100% no-repeat;
+  transition: background-color 0.2s ease;
 }
 
-.logo svg {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 613 / 265;
+/* sem o efeito flair (toque ou movimento reduzido), o verde entra por transição de cor */
+:global(html:not(.flair-on)) .logo:hover,
+.logo:focus-visible {
+  background: var(--lime);
 }
 
 .nav {

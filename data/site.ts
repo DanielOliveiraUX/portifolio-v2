@@ -9,14 +9,15 @@ export const site = {
 };
 
 export const about = {
-  intro: "Um Product Manager que entende de pessoas, dados e interface.",
+  // cada item é uma linha; em telas pequenas as linhas se juntam e quebram sozinhas.
+  // Trechos entre **asteriscos** saem em negrito.
   paragraphs: [
+    ["Seu time entrega o tempo todo,", "mas **o resultado do produto não aparece.**"],
     [
-      "Todo produto tem mais pedidos do que capacidade para atender.",
-      "Sem alguém decidindo com critério, o time acaba trabalhando para quem pede mais alto, e o esforço se espalha sem chegar a lugar nenhum.",
-    ],
-    [
-      "O trabalho do PM é organizar essa escolha: entender o problema, decidir o que entra agora e medir se funcionou. Quando isso acontece, o time para de refazer trabalho e cada entrega passa a ter um resultado para mostrar.",
+      "Meu trabalho como PM é **ligar cada decisão**",
+      "**a um problema real** e **medir o que mudou**,",
+      "para que cada entrega tenha",
+      "**resultado para mostrar.**",
     ],
   ],
 };

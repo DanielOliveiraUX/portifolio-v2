@@ -8,37 +8,37 @@ import { about } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
-/** Texto da seção verde: as palavras surgem em sequência toda vez que cada parágrafo entra na tela. */
+/**
+ * Texto da seção verde, inspirado no pen mdKWBmm da GreenSock: a seção fica presa na tela e,
+ * conforme a rolagem avança, cada letra "acende" em sequência, como um marca-texto de leitura.
+ */
 export function AboutText({ className, lineClassName }: { className?: string; lineClassName?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = ref.current;
-    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const section = root?.parentElement;
+    if (!root || !section || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>("p", root).forEach((p) =>
-        SplitText.create(p, {
-          type: "words",
-          autoSplit: true,
-          onSplit: (self) =>
-            gsap.from(self.words, {
-              // mesmo movimento do split-text do Motion: fade + sobe 10px, mola sem quique
-              opacity: 0,
-              y: 10,
-              duration: 1.4,
-              stagger: 0.03,
-              ease: "expo.out",
+      SplitText.create(gsap.utils.toArray<HTMLElement>("p", root), {
+        // "words" mantém as palavras inteiras na quebra de linha; a animação corre nas letras
+        type: "words,chars",
+        autoSplit: true,
+        // a timeline retornada é revertida junto com o split (resize, fontes carregando)
+        onSplit: (self) =>
+          gsap
+            .timeline({
               scrollTrigger: {
-                trigger: p,
-                start: "top 90%",
-                end: "bottom 10%",
-                // reinicia sempre que o parágrafo volta à tela, descendo ou subindo
-                toggleActions: "restart none restart none",
+                trigger: section,
+                start: "top top",
+                end: "+=150%",
+                pin: true,
+                scrub: 0.75,
               },
-            }),
-        })
-      );
+            })
+            .fromTo(self.chars, { opacity: 0.18 }, { opacity: 1, stagger: 0.1, duration: 0.1, ease: "none" }),
+      });
     }, root);
 
     return () => ctx.revert();
@@ -46,12 +46,11 @@ export function AboutText({ className, lineClassName }: { className?: string; li
 
   return (
     <div ref={ref} className={className}>
-      <p>{about.intro}</p>
       {about.paragraphs.map((lines, i) => (
         <p key={i}>
           {lines.map((line, j) => (
             <span key={j} className={lineClassName}>
-              {line}{" "}
+              {line.split("**").map((part, k) => (k % 2 ? <strong key={k}>{part}</strong> : part))}{" "}
             </span>
           ))}
         </p>

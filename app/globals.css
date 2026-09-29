@@ -15,7 +15,7 @@
 
   --pad: clamp(20px, 2.65vw, 40px);
   --max: 1432px;
-  --header-h: 80px;
+  --header-h: 59px;
   --radius: 20px;
 
   /* vidro escuro dos menus fixos (header e abas de projetos): quase preto e translúcido,
