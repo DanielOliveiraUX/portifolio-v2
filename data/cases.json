@@ -167,16 +167,17 @@
       ]
     },
     {
-      "slug": "projeto-03",
+      "slug": "showroom-360",
       "featured": true,
-      "meta": "France · Global · 2024–2026",
-      "title": "Veepee · Design System Lead",
-      "summary": "Scaling a multi-brand e-commerce ecosystem through governance, systems, and AI-assisted workflows.",
+      "meta": "Setor automotivo · Produto SaaS",
+      "title": "Showroom 360 · Confiança na compra que virou receita",
+      "summary": "Uma vitrine digital em 360° devolveu ao comprador a confiança que a pandemia tirou e virou um produto SaaS com receita própria.",
       "bullets": [
-        "Led Design System governance across multiple product and dev teams",
-        "Reduced design-to-dev friction through good documentation and UX practices",
-        "Facilitated stakeholder alignment in complex, multi-team environments"
+        "Li as reclamações como um problema de confiança, não de fotos: sem ver o veículo, o cliente dava lances menores e o faturamento caía",
+        "Concentrei a complexidade no backend e deixei a captura numa sequência guiada de fotos, simples para quem opera o pátio",
+        "Elevei a percepção de valor e a segurança na hora da compra, e a solução virou um produto SaaS, uma nova fonte de receita escalável"
       ],
+      "coverEmbed": "/motion/showroom360-motion.html?embed",
       "gallery": [
         {
           "src": "/images/placeholder.jpg",
@@ -191,22 +192,22 @@
           "alt": ""
         }
       ],
-      "intro": "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
+      "intro": "Com as visitas aos pátios suspensas na pandemia, os clientes passaram a comprar sem ver o veículo de perto.\nAs reclamações sobre o estado dos carros cresceram, os lances caíram e o faturamento mensal sentiu.\nComo PM, meu trabalho foi enxergar por trás da reclamação o problema de negócio:\n\nDevolver ao comprador a segurança de avaliar o veículo à distância, com uma solução que coubesse no custo e pudesse virar produto.",
       "sections": [
         {
           "id": "visao-geral",
           "title": "Visão geral",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "O problema não era a qualidade dos veículos, era a incerteza de quem comprava sem poder vê-los. Sem as visitas presenciais, o cliente não conseguia avaliar o estado do carro, desconfiava do que via nos anúncios e protegia o próprio risco oferecendo menos.",
+            "Para o negócio, isso pesava em dois lugares: na percepção de valor do que era vendido e no faturamento mensal. A oportunidade era dupla. Resolver a dor do comprador e, se a solução fosse escalável, criar um produto com receita própria."
           ]
         },
         {
           "id": "contexto-do-negocio",
           "title": "Contexto do negócio",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "As reclamações apareciam com o mesmo padrão em vários canais: dificuldade de avaliar o veículo e medo de surpresas na retirada. Isso afetava diretamente os lances, porque quem não confia no que vê paga menos.",
+            "Três restrições definiram a solução desde o início. Ela precisava ser simples para o usuário final, precisava funcionar com o processo que a equipe do pátio já tinha e precisava ter custo de operação sob controle. Fotos em volume pesam em armazenamento e servidor, e um custo mal dimensionado tornaria o projeto inviável."
           ],
           "image": {
             "src": "/images/placeholder.jpg",
@@ -217,24 +218,33 @@
           "id": "pesquisa-e-descoberta",
           "title": "Pesquisa e descoberta",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Comecei pelos dados que o próprio cliente já tinha deixado: SAC, Reclame Aqui e avaliações no Google. Depois fui ouvir as pessoas, principalmente no momento da retirada do veículo, quando o comprador compara o que esperava com o que recebeu e explica com clareza como decidiu comprar.",
+            "Dessas conversas saiu o que importava: como o usuário avaliava um veículo e quais informações visuais geravam confiança. Em vez de partir de uma ideia de funcionalidade, parti de um critério de decisão do comprador, e foi ele que orientou o escopo."
           ]
         },
         {
           "id": "decisoes-chave",
           "title": "Decisões-chave",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Propus uma visualização interativa em 360°, externa e interna, no lugar de mais fotos ou de vídeos. Era o formato que respondia à pergunta central do comprador, como está o carro por dentro e por fora, sem exigir que ele estivesse no pátio.",
+            "Desenhei o fluxo de captura para a operação, não para o usuário final. O colaborador segue uma sequência guiada de fotos e o sistema monta o 360° sozinho. Assim a qualidade não depende da habilidade de quem fotografa, e a experiência do comprador continua simples e fluida.",
+            "Tratei o volume de imagens como decisão de negócio, não só técnica. Concentrei a complexidade no backend e busquei um time de desenvolvimento capaz de sustentar isso sem sobrecarregar os servidores nem elevar o custo operacional, para preservar a viabilidade econômica do projeto."
           ]
         },
         {
           "id": "o-que-foi-entregue",
           "title": "O que foi entregue",
           "paragraphs": [
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance.",
-            "Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance. Senior UX/UI Designer, in-house. Full ownership of designer experience, Figma kit architecture, component design, documentation, and long-term governance."
+            "Entreguei a concepção da solução, a pesquisa com usuários e a validação do modelo de experiência, com o projeto pronto para o time de desenvolvimento seguir na implementação técnica.",
+            "O resultado foi um aumento significativo na percepção de valor dos veículos anunciados, e usuários relataram mais segurança na hora de decidir a compra. A solução também deixou de ser só uma melhoria interna e se transformou em um produto SaaS, criando uma nova fonte de receita escalável."
+          ]
+        },
+        {
+          "id": "aprendizados",
+          "title": "Aprendizados",
+          "paragraphs": [
+            "Reclamação de cliente costuma ser sintoma de um problema de negócio maior. Ler os feedbacks até chegar ao que eles custam, no caso lances menores e menos faturamento, é o que transforma uma dor operacional numa oportunidade de produto.",
+            "Experiência simples para o usuário quase sempre significa complexidade bem resolvida por trás, e essa complexidade tem custo. Equilibrar experiência e viabilidade operacional, com infraestrutura e escala na conversa desde o começo, é o que decide se uma boa solução se sustenta como produto."
           ]
         }
       ]
