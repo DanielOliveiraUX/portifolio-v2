@@ -538,6 +538,10 @@ function frame(now) {
 }
 function fit() {
   const vp = $('#viewport'), rec = document.body.classList.contains('rec');
+  // no embed o palco assume a proporção do iframe, ocupando 100% da altura e da largura
+  if (document.body.classList.contains('embed') && vp.clientWidth && vp.clientHeight) {
+    H = 1080; W = Math.round(H * vp.clientWidth / vp.clientHeight);
+  }
   const s = Math.min(vp.clientWidth / W, vp.clientHeight / H) * (rec ? 1 : .94);
   stage.style.width = W + 'px'; stage.style.height = H + 'px';
   stage.style.transform = `translate(-50%,-50%) scale(${s})`;
