@@ -21,6 +21,8 @@
 
 .heroImg {
   object-fit: cover;
+  /* Daniel fica um pouco à direita do centro da foto: o recorte vertical do mobile o mantém em quadro */
+  object-position: 55% center;
 }
 
 .heroInner {
