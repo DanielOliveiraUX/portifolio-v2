@@ -217,7 +217,8 @@
 
 .bioImage {
   object-fit: cover;
-  object-position: 30% center;
+  /* rosto em ~58% da largura e ~35% da altura da foto: o recorte não corta o rosto */
+  object-position: 58% 30%;
 }
 
 .bioText {

@@ -32,4 +32,7 @@ export const bio = [
 /** Imagem de exemplo (Lorem Picsum/Unsplash); trocar pela definitiva. */
 export const heroImage = { src: "/images/hero-bg.jpg" };
 
-export const bioImage = { src: "/images/placeholder.jpg", alt: "" };
+export const bioImage = {
+  src: "/images/daniel-oliveira-sobre-mim.jpg",
+  alt: "Daniel Oliveira sentado numa cadeira, de boné, óculos e moletom azul-marinho, olhando para a câmera em um escritório com luz roxa",
+};
