@@ -6,7 +6,7 @@ import { site } from "@/data/site";
 import s from "./Header.module.css";
 
 const links = [
-  { href: "/#trabalhos", label: "Trabalhos" },
+  { href: "/projetos", label: "Trabalhos" },
   { href: "/#sobre", label: "Sobre mim" },
   { href: "/#contato", label: "Contato" },
 ];
