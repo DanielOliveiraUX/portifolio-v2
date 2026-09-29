@@ -71,6 +71,8 @@
 
   .media {
     flex: none;
+    align-self: stretch;
+    width: 100%;
     min-height: 0;
     aspect-ratio: 16 / 10;
   }

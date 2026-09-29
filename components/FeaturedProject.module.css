@@ -91,6 +91,9 @@
   }
 
   .media {
+    /* "stretch" (do desktop) faz o Safari ignorar a proporção e zerar a altura da capa */
+    align-self: start;
+    width: 100%;
     aspect-ratio: 4 / 3;
     min-height: 0;
   }
