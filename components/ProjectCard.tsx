@@ -8,7 +8,11 @@ export function ProjectCard({ project, headingLevel = "h3" }: { project: Project
   return (
     <article className={s.card}>
       <div className={s.media}>
-        <Image src={project.cover.src} alt={project.cover.alt} fill sizes="(max-width: 559px) 100vw, 283px" className={s.image} />
+        {project.coverEmbed ? (
+          <iframe src={project.coverEmbed} title={project.cover.alt || project.title} className={s.embed} loading="lazy" tabIndex={-1} />
+        ) : (
+          <Image src={project.cover.src} alt={project.cover.alt} fill sizes="(max-width: 559px) 100vw, 283px" className={s.image} />
+        )}
       </div>
       <div className={s.body}>
         <div className={s.text}>

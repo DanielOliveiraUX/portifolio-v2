@@ -16,3 +16,10 @@
   height: 1px;
   background: var(--lime);
 }
+
+/* traço mais curto no mobile, igual em todos os rótulos */
+@media (max-width: 767px) {
+  .line {
+    width: 14px;
+  }
+}

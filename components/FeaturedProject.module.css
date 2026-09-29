@@ -5,6 +5,7 @@
   align-items: center;
   padding-right: clamp(24px, 3.6vw, 52px);
   background: var(--black-2);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: var(--radius);
   overflow: hidden;
   /* o html já aplica scroll-padding-top (header + 16px); aqui entra só a altura do menu de abas
@@ -85,8 +86,8 @@
   .card {
     grid-template-columns: 1fr;
     padding-right: 0;
-    /* no mobile o menu fixo tem duas linhas (~119px) */
-    scroll-margin-top: 119px;
+    /* no mobile o menu fixo também tem uma linha só */
+    scroll-margin-top: 59px;
   }
 
   .media {

@@ -113,12 +113,16 @@
 
   .mobile[data-open="true"] {
     position: fixed;
-    inset: var(--header-h) 0 0 0;
+    inset: 0;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding: 40px var(--pad);
+    /* a barra do header (logo + botão) fica por cima; o conteúdo começa abaixo dela */
+    padding: calc(var(--header-h) + 40px) var(--pad) calc(32px + env(safe-area-inset-bottom, 0px));
     background: var(--black);
+    overflow-y: auto;
     font-family: var(--font-display);
     font-size: 36px;
     font-weight: 600;
@@ -132,6 +136,40 @@
   }
 }
 
+/* o desfoque do vidro cria um bloco de referência para o menu fixo e o prende à altura do header,
+   deixando o fundo do menu sem cor; com o menu aberto o header fica sólido */
 .header[data-open="true"] {
   background: var(--black);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  /* acima de qualquer outro elemento da página */
+  z-index: 9999;
+}
+
+/* logo e botão de fechar ficam acima do fundo do menu */
+.header[data-open="true"] .inner {
+  position: relative;
+  z-index: 1;
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.17px;
+}
+
+.contacts a {
+  color: var(--muted);
+}
+
+.contacts a:hover,
+.contacts a:focus-visible {
+  color: var(--lime);
 }

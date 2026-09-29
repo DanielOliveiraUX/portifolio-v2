@@ -26,18 +26,17 @@ export function AboutText({ className, lineClassName }: { className?: string; li
         type: "words,chars",
         autoSplit: true,
         // a timeline retornada é revertida junto com o split (resize, fontes carregando)
-        onSplit: (self) =>
-          gsap
+        onSplit: (self) => {
+          // no mobile a seção é mais baixa e não prende a tela: o texto acende enquanto ela cruza a tela
+          const mobile = window.matchMedia("(max-width: 767px)").matches;
+          return gsap
             .timeline({
-              scrollTrigger: {
-                trigger: section,
-                start: "top top",
-                end: "+=150%",
-                pin: true,
-                scrub: 0.75,
-              },
+              scrollTrigger: mobile
+                ? { trigger: section, start: "top 75%", end: "bottom 45%", scrub: 0.75 }
+                : { trigger: section, start: "top top", end: "+=150%", pin: true, scrub: 0.75 },
             })
-            .fromTo(self.chars, { opacity: 0.18 }, { opacity: 1, stagger: 0.1, duration: 0.1, ease: "none" }),
+            .fromTo(self.chars, { opacity: 0.18 }, { opacity: 1, stagger: 0.1, duration: 0.1, ease: "none" });
+        },
       });
     }, root);
 

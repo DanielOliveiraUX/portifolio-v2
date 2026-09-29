@@ -109,4 +109,18 @@
   .tabs::-webkit-scrollbar {
     display: none;
   }
+
+  /* no mobile a aba ativa mostra só o número, sem a palavra "Projeto" */
+  .word {
+    display: none;
+  }
+
+  /* abas mais compactas para caberem no centro da barra, entre o rótulo e o botão */
+  .tabs a {
+    padding-inline: 10px;
+  }
+
+  .tabs {
+    margin-inline: -10px;
+  }
 }

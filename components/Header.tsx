@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { site } from "@/data/site";
 import s from "./Header.module.css";
 
 const links = [
@@ -61,6 +62,12 @@ export function Header() {
             {l.label}
           </Link>
         ))}
+        <div className={s.contacts}>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <a href={site.linkedin} target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+        </div>
       </nav>
     </header>
   );
