@@ -7,7 +7,8 @@
 
 .heroBg {
   position: absolute;
-  inset: 0;
+  /* a camada começa 16% acima do hero: a foto sobe sem deixar faixa vazia embaixo */
+  inset: -16% 0 0;
   will-change: transform, filter, opacity;
 }
 
@@ -22,7 +23,7 @@
 .heroImg {
   object-fit: cover;
   /* Daniel fica um pouco à direita do centro da foto: o recorte vertical do mobile o mantém em quadro */
-  object-position: 55% center;
+  object-position: 55% top;
 }
 
 .heroInner {
@@ -104,7 +105,7 @@
 }
 
 .aboutInner {
-  text-align: center;
+  text-align: left;
 }
 
 .aboutInner strong {

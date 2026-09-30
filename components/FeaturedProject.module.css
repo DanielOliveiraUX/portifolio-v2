@@ -123,9 +123,3 @@
 .titleLink {
   color: inherit;
 }
-
-.titleLink:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.12em;
-}

@@ -31,52 +31,31 @@ export default async function CasePage({ params }: Params) {
   const [project, data] = await Promise.all([getProject(slug), getCaseData(slug)]);
   if (!project || !data) notFound();
 
-  const [hero, ...rest] = project.gallery;
+  const [hero] = project.gallery;
   const others = await getOtherProjects(project.slug);
 
   return (
     <>
-      <ReadingProgress key={project.slug} />
-
-      {/* Título + galeria */}
+      {/* Primeira dobra: animação do case + resumo, ocupando a tela toda */}
       <section className={s.top}>
         <div className={`container ${s.topInner}`}>
-          <h1 className={s.pageTitle} data-edit="title">
-            {project.title}
-          </h1>
-          <div className={s.gallery}>
-            {hero && (
-              <div className={`${s.shot} ${s.shotWide}`} data-edit-image="gallery.0">
-                <Image src={hero.src} alt={project.coverEmbed ? "" : hero.alt} fill priority sizes="100vw" className={s.img} />
-                {project.coverEmbed && (
-                  <iframe src={project.coverEmbed} title={hero.alt || project.title} className={s.embed} tabIndex={-1} />
-                )}
-              </div>
-            )}
-            {rest.length > 0 && (
-              <div className={s.pair}>
-                {rest.map((img, i) => (
-                  <div key={i} className={`${s.shot} ${s.shotHalf}`} data-edit-image={`gallery.${i + 1}`}>
-                    <Image src={img.src} alt={img.alt} fill sizes="(max-width: 767px) 100vw, 50vw" className={s.img} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+          {hero && (
+            <div className={`${s.shot} ${s.shotWide}`} data-edit-image="gallery.0">
+              <Image src={hero.src} alt={project.coverEmbed ? "" : hero.alt} fill priority sizes="100vw" className={s.img} />
+              {project.coverEmbed && (
+                <iframe src={project.coverEmbed} title={hero.alt || project.title} className={s.embed} tabIndex={-1} />
+              )}
+            </div>
+          )}
 
-      {/* Intro + corpo */}
-      <section className={s.content}>
-        <div className={`container ${s.contentInner}`}>
           <div className={s.intro}>
             <div className={s.introLead}>
               <p className={s.meta} data-edit="meta">
                 {project.meta}
               </p>
-              <h2 className={s.introTitle} data-edit-mirror="title">
+              <h1 className={s.introTitle} data-edit="title">
                 {project.title}
-              </h2>
+              </h1>
               <p className={s.summary} data-edit="summary">
                 {project.summary}
               </p>
@@ -85,7 +64,12 @@ export default async function CasePage({ params }: Params) {
               {project.intro}
             </p>
           </div>
+        </div>
+      </section>
 
+      {/* Corpo */}
+      <section className={s.content}>
+        <div className={`container ${s.contentInner}`}>
           {/* vaga do painel "tópicos do card", usado só no modo edição */}
           <div className={s.imageSlot} data-edit-card-slot />
 
@@ -142,6 +126,9 @@ export default async function CasePage({ params }: Params) {
       <Contact variant="case" />
 
       <CaseEditor initial={data} />
+
+      {/* fica por último: ao trocar de página o Next rola até o primeiro elemento, e uma barra fixa não leva ao topo */}
+      <ReadingProgress key={project.slug} />
     </>
   );
 }
