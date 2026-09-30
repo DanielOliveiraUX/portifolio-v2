@@ -127,7 +127,7 @@
           "id": "contexto-do-negocio",
           "title": "Contexto do negócio",
           "paragraphs": [
-            "Percebi o tamanho do problema quando cobri a função de um colega em período de licença. Ao executar a tarefa, vi de perto o tempo gasto, o cansaço e a pressão sobre o time. Conversei com quem fazia o processo todo dia e confirmei que aquela rotina não se sustentava.",
+            "Percebi o tamanho do problema quando cobri a função de um colega em período de licença.\nAo executar a tarefa, vi de perto o tempo gasto, o cansaço e a pressão sobre o time.\nConversei com quem fazia o processo todo dia e confirmei que aquela rotina não se sustentava.",
             "O sistema administrativo da empresa não tinha recurso para esse tipo de automação, e o fornecedor não demonstrou interesse em desenvolvê-lo. Isso definiu as restrições: a solução precisava nascer fora do sistema principal, custar pouco e não depender de integrações complexas."
           ]
         },
@@ -135,7 +135,7 @@
           "id": "pesquisa-e-descoberta",
           "title": "Pesquisa e descoberta",
           "paragraphs": [
-            "Mapeei o fluxo completo com conversas com as pessoas envolvidas, observação da rotina real e análise de como os registros saíam do sistema até virarem cada e-mail individual.",
+            "Mapeei o fluxo completo com conversas com as pessoas envolvidas, observação da rotina e análise de como os registros saíam do sistema até virarem cada e-mail individual.",
             "O mapa mostrou onde o tempo se perdia: o trabalho repetitivo estava na montagem e no envio de cada mensagem, não na decisão do que enviar. Isso indicava um processo bom para automatizar, com regras claras e dados que já existiam."
           ]
         },
@@ -143,7 +143,7 @@
           "id": "decisoes-chave",
           "title": "Decisões-chave",
           "paragraphs": [
-            "Comparei os caminhos possíveis: esperar o fornecedor, contratar uma solução SaaS ou construir internamente. A primeira dependia de quem já tinha se mostrado desinteressado, e a segunda exigia investimento e um novo fornecedor para um problema específico. Optei por construir com as ferramentas que a empresa já usava.",
+            "Comparei os caminhos possíveis: esperar o fornecedor, contratar uma solução SaaS ou construir internamente. A primeira dependia de quem já tinha se mostrado desinteressado, e a segunda exigia investimento e um novo fornecedor para um problema específico.\nOptei por construir com as ferramentas que a empresa já usava.",
             "Desenvolvi, junto com o Luan Borges, uma planilha automatizada com VBScript. Ela lê os dados essenciais exportados do sistema, preenche os campos de cada e-mail e dispara todos os envios de uma só vez.",
             "Tratei a adoção como parte do escopo. A entrega incluiu um guia passo a passo e um treinamento com o time, para que qualquer pessoa conseguisse executar a rotina sem depender de quem a construiu."
           ]
