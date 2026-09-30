@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import { about } from "@/data/site";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -12,10 +11,20 @@ gsap.registerPlugin(ScrollTrigger, SplitText);
  * Texto da seção verde, inspirado no pen mdKWBmm da GreenSock: a seção fica presa na tela e,
  * conforme a rolagem avança, cada letra "acende" em sequência, como um marca-texto de leitura.
  */
-export function AboutText({ className, lineClassName }: { className?: string; lineClassName?: string }) {
+export function AboutText({
+  paragraphs,
+  className,
+  lineClassName,
+}: {
+  /** Cada parágrafo é uma lista de linhas; trechos entre **asteriscos** saem em negrito. */
+  paragraphs: string[][];
+  className?: string;
+  lineClassName?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  // layout effect: o pin precisa ser desfeito antes de o React remover a seção ao trocar de página
+  useLayoutEffect(() => {
     const root = ref.current;
     const section = root?.parentElement;
     if (!root || !section || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -45,7 +54,7 @@ export function AboutText({ className, lineClassName }: { className?: string; li
 
   return (
     <div ref={ref} className={className}>
-      {about.paragraphs.map((lines, i) => (
+      {paragraphs.map((lines, i) => (
         <p key={i}>
           {lines.map((line, j) => (
             <span key={j} className={lineClassName}>

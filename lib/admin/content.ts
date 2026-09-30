@@ -1,9 +1,9 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { CASES_FILE, UPLOADS_DIR, githubConfig, githubHeaders } from "@/lib/content";
-import type { CaseData, CaseImage, CasesFile } from "@/lib/content-types";
+import { CASES_FILE, MOTION_DIR, SITE_FILE, UPLOADS_DIR, githubConfig, githubHeaders } from "@/lib/content";
+import type { CaseData, CaseImage, CasesFile, SiteData } from "@/lib/content-types";
 
 export class ValidationError extends Error {}
 
@@ -32,6 +32,32 @@ function cleanImage(v: unknown, field: string): CaseImage {
     throw new ValidationError(`${field}: caminho de imagem inválido`);
   }
   return { src: img.src, alt: cleanText(img.alt ?? "", LIMITS.alt, `${field} (descrição)`, true) };
+}
+
+/** Animação da capa: só páginas que já estão na pasta public/motion do site. */
+const EMBED_RE = /^\/motion\/[A-Za-z0-9_-]+\.html\?embed$/;
+
+function cleanEmbed(v: unknown) {
+  if (v === undefined || v === "") return undefined;
+  if (typeof v !== "string" || !EMBED_RE.test(v)) throw new ValidationError("Animação da capa inválida");
+  return v;
+}
+
+/** Links do site: páginas do próprio site, https, e-mail ou telefone. Nunca javascript: e afins. */
+function cleanLink(v: unknown, field: string) {
+  const s = cleanText(v, LIMITS.short * 2, field);
+  if (/^\/(?!\/)/.test(s) || s.startsWith("#")) return s;
+  if (/^mailto:[^\s@]+@[^\s@]+\.[^\s@]+/i.test(s) || /^tel:\+?[\d\s()-]{6,}$/i.test(s)) return s;
+  try {
+    if (new URL(s).protocol === "https:") return s;
+  } catch {}
+  throw new ValidationError(`${field}: use um link https://, mailto:, tel: ou uma página do site (/...)`);
+}
+
+function cleanEmail(v: unknown, field: string) {
+  const s = cleanText(v, LIMITS.short, field);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)) throw new ValidationError(`${field}: e-mail inválido`);
+  return s;
 }
 
 /** Aplica o que veio do editor sobre o case atual, validando cada campo. */
@@ -67,16 +93,92 @@ export function applyEdit(current: CaseData, body: unknown): CaseData {
     return s.image ? { ...next, image: cleanImage(s.image, `Imagem da seção "${next.title}"`) } : next;
   });
 
+  // sem animação: a capa volta a ser a primeira imagem da galeria
+  const coverEmbed = "coverEmbed" in b ? cleanEmbed(b.coverEmbed) : current.coverEmbed;
+
+  // mesma ordem de chaves do arquivo, para o histórico do git mostrar só o que mudou
   return {
-    ...current,
-    title: cleanText(b.title, LIMITS.short, "Título"),
+    slug: current.slug,
+    featured: current.featured,
     meta: cleanText(b.meta, LIMITS.short, "Linha de contexto"),
+    title: cleanText(b.title, LIMITS.short, "Título"),
     summary: cleanText(b.summary, LIMITS.summary, "Resumo"),
-    intro: cleanText(b.intro, LIMITS.long, "Introdução"),
     bullets,
+    ...(coverEmbed ? { coverEmbed } : {}),
     gallery,
+    intro: cleanText(b.intro, LIMITS.long, "Introdução"),
     sections,
   };
+}
+
+// ---------- Textos e imagens do site ----------
+
+function applySite(body: unknown): SiteData {
+  if (!body || typeof body !== "object") throw new ValidationError("Conteúdo inválido");
+  const b = body as { hero?: Record<string, unknown>; about?: Record<string, unknown>; bio?: Record<string, unknown>; contact?: Record<string, unknown>; seo?: Record<string, unknown> };
+  const { hero = {}, about = {}, bio = {}, contact = {}, seo = {} } = b;
+
+  if (!Array.isArray(about.paragraphs) || !about.paragraphs.length || about.paragraphs.length > 6) {
+    throw new ValidationError("Seção verde: use de 1 a 6 parágrafos");
+  }
+  const aboutParagraphs = about.paragraphs.map((p, i) => {
+    if (!Array.isArray(p) || p.length > 10) throw new ValidationError(`Seção verde, parágrafo ${i + 1}: linhas inválidas`);
+    const lines = p.map((l, j) => cleanText(l, LIMITS.short, `Seção verde, parágrafo ${i + 1}, linha ${j + 1}`, true)).filter(Boolean);
+    if (!lines.length) throw new ValidationError(`Seção verde, parágrafo ${i + 1}: está vazio`);
+    return lines;
+  });
+
+  if (!Array.isArray(bio.paragraphs) || bio.paragraphs.length > LIMITS.paragraphs) throw new ValidationError("Sobre mim: parágrafos inválidos");
+  const bioParagraphs = bio.paragraphs.map((p, i) => cleanText(p, LIMITS.long, `Sobre mim, parágrafo ${i + 1}`, true)).filter(Boolean);
+  if (!bioParagraphs.length) throw new ValidationError("Sobre mim: escreva pelo menos um parágrafo");
+
+  return {
+    hero: {
+      role: cleanText(hero.role, LIMITS.short, "Hero: cargo"),
+      location: cleanText(hero.location, LIMITS.short, "Hero: localização"),
+      // decorativa: fica sem descrição, o nome já está no título
+      image: { ...cleanImage(hero.image, "Imagem do hero"), alt: "" },
+    },
+    about: { paragraphs: aboutParagraphs },
+    bio: { paragraphs: bioParagraphs, image: cleanImage(bio.image, "Foto do Sobre mim") },
+    contact: {
+      title: cleanText(contact.title, LIMITS.summary, "Contato: título"),
+      ctaLabel: cleanText(contact.ctaLabel, LIMITS.short, "Contato: texto do botão"),
+      ctaUrl: cleanLink(contact.ctaUrl, "Contato: link do botão"),
+      email: cleanEmail(contact.email, "Contato: e-mail"),
+      linkedin: cleanLink(contact.linkedin, "Contato: LinkedIn"),
+      footer: cleanText(contact.footer, LIMITS.short, "Rodapé"),
+    },
+    seo: {
+      title: cleanText(seo.title, LIMITS.short, "Google: título"),
+      description: cleanText(seo.description, LIMITS.summary, "Google: descrição"),
+    },
+  };
+}
+
+export async function getSiteForEdit() {
+  return (await openJson<SiteData>(SITE_FILE)).data;
+}
+
+export async function saveSite(body: unknown) {
+  const { save } = await openJson<SiteData>(SITE_FILE);
+  await save(applySite(body), "content: atualiza textos e imagens do site pelo editor");
+}
+
+/** Páginas de animação disponíveis em public/motion (as que podem virar capa de um case). */
+export async function listAnimations() {
+  let names: string[];
+  const gh = githubConfig();
+  if (gh) {
+    const items: { name: string; type: string }[] = await github(`/repos/${gh.repo}/contents/${MOTION_DIR}?ref=${encodeURIComponent(gh.branch)}`, gh.token);
+    names = items.filter((i) => i.type === "file").map((i) => i.name);
+  } else {
+    names = await readdir(path.join(process.cwd(), MOTION_DIR));
+  }
+  return names
+    .filter((n) => /^[A-Za-z0-9_-]+\.html$/.test(n))
+    .sort()
+    .map((n) => ({ name: n.replace(/\.html$/, ""), src: `/motion/${n}?embed` }));
 }
 
 // ---------- Novo artigo ----------
@@ -136,25 +238,27 @@ async function github(url: string, token: string, init?: RequestInit) {
   return res.json();
 }
 
-type Loaded = { data: CasesFile; save: (data: CasesFile, message: string) => Promise<void> };
+type Loaded<T> = { data: T; save: (data: T, message: string) => Promise<void> };
 
-const serialize = (data: CasesFile) => JSON.stringify(data, null, 2) + "\n";
+const serialize = (data: unknown) => JSON.stringify(data, null, 2) + "\n";
+
+const openCases = () => openJson<CasesFile>(CASES_FILE);
 
 /** Lê a versão mais recente do arquivo (sem cache) e devolve uma função para gravar por cima dela. */
-async function openCases(): Promise<Loaded> {
+async function openJson<T>(file: string): Promise<Loaded<T>> {
   const gh = githubConfig();
   if (gh) {
-    const url = `/repos/${gh.repo}/contents/${CASES_FILE}`;
-    const file = await github(`${url}?ref=${encodeURIComponent(gh.branch)}`, gh.token);
+    const url = `/repos/${gh.repo}/contents/${file}`;
+    const remote = await github(`${url}?ref=${encodeURIComponent(gh.branch)}`, gh.token);
     return {
-      data: JSON.parse(Buffer.from(file.content, "base64").toString("utf8")),
+      data: JSON.parse(Buffer.from(remote.content, "base64").toString("utf8")),
       save: async (data, message) => {
         await github(url, gh.token, {
           method: "PUT",
           body: JSON.stringify({
             message,
             content: Buffer.from(serialize(data), "utf8").toString("base64"),
-            sha: file.sha, // se alguém salvou no meio tempo, o GitHub recusa em vez de sobrescrever
+            sha: remote.sha, // se alguém salvou no meio tempo, o GitHub recusa em vez de sobrescrever
             branch: gh.branch,
           }),
         });
@@ -162,7 +266,7 @@ async function openCases(): Promise<Loaded> {
     };
   }
   if (process.env.NODE_ENV !== "production") {
-    const full = path.join(process.cwd(), CASES_FILE);
+    const full = path.join(process.cwd(), file);
     return {
       data: JSON.parse(await readFile(full, "utf8")),
       save: (data) => writeFile(full, serialize(data), "utf8"),

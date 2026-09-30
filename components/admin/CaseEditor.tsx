@@ -27,6 +27,7 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
   const [images, setImages] = useState<Record<string, ImageState>>(() => initialImages(initial));
   const [uploading, setUploading] = useState<string | null>(null);
   const [bullets, setBullets] = useState<string[]>(initial.bullets);
+  const [embed, setEmbed] = useState(initial.coverEmbed ?? "");
   const [structBusy, setStructBusy] = useState(false);
 
   // Checa a sessão só se o navegador tiver o cookie-aviso (visitantes comuns não fazem requisição).
@@ -52,13 +53,7 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
   useEffect(() => {
     if (!editing) return;
     const els = Array.from(document.querySelectorAll<HTMLElement>("[data-edit]"));
-    const onInput = (e: Event) => {
-      setDirty(true);
-      const el = e.currentTarget as HTMLElement;
-      if (el.dataset.edit === "title") {
-        document.querySelectorAll<HTMLElement>('[data-edit-mirror="title"]').forEach((m) => (m.textContent = el.innerText));
-      }
-    };
+    const onInput = () => setDirty(true);
     els.forEach((el) => {
       el.setAttribute("contenteditable", "plaintext-only");
       el.classList.add(s.editable);
@@ -121,6 +116,7 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
       summary: read("summary"),
       intro: read("intro"),
       bullets: bullets.map((b) => b.trim()).filter(Boolean),
+      coverEmbed: embed,
       gallery: initial.gallery.map((_, i) => images[`gallery.${i}`].img),
       sections: initial.sections.map((sec, i) => ({
         id: sec.id,
@@ -191,6 +187,16 @@ export function CaseEditor({ initial }: { initial: CaseData }) {
 
   return (
     <>
+      {editing && (
+        <CoverAnimation
+          value={embed}
+          onChange={(next) => {
+            setEmbed(next);
+            setDirty(true);
+          }}
+        />
+      )}
+
       {editing && (
         <CardBullets
           bullets={bullets}
@@ -374,6 +380,63 @@ function ImageControl({
     );
   }
   return null;
+}
+
+/** Escolhe a animação que aparece na capa do case e do card (ou nenhuma, para usar a imagem). */
+function CoverAnimation({ value, onChange }: { value: string; onChange: (src: string) => void }) {
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  const [options, setOptions] = useState<{ name: string; src: string }[] | null>(null);
+  const [error, setError] = useState("");
+  const [frame, setFrame] = useState<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    setSlot(document.querySelector<HTMLElement>("[data-edit-card-slot]"));
+    setFrame(document.querySelector<HTMLIFrameElement>('[data-edit-image="gallery.0"] iframe'));
+    fetch("/api/admin/animations", { cache: "no-store" })
+      .then(async (r) => {
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(data.error || "Não foi possível carregar as animações.");
+        setOptions(data.animations);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Não foi possível carregar as animações."));
+  }, []);
+
+  // Mostra a troca na capa da página antes de salvar.
+  useEffect(() => {
+    if (!frame) return;
+    frame.hidden = !value;
+    if (value && frame.getAttribute("src") !== value) frame.src = value;
+  }, [frame, value]);
+
+  if (!slot) return null;
+
+  return createPortal(
+    <div className={s.panel}>
+      <p className={s.panelTitle}>Animação da capa</p>
+      <select
+        className={s.altInput}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={!options}
+        aria-label="Animação da capa"
+      >
+        <option value="">Sem animação (usa a primeira imagem)</option>
+        {/* mantém a opção atual mesmo se o arquivo não aparecer na lista */}
+        {value && !options?.some((o) => o.src === value) && <option value={value}>{value}</option>}
+        {options?.map((o) => (
+          <option key={o.src} value={o.src}>
+            {o.name}
+          </option>
+        ))}
+      </select>
+      {error && <p className={s.panelHint}>{error}</p>}
+      {!frame && value && <p className={s.panelHint}>Salve para ver a animação na capa.</p>}
+      <p className={s.panelHint}>
+        Aparece no topo do case e no card da home. A imagem da capa continua embaixo, caso a animação não carregue.
+      </p>
+    </div>,
+    slot
+  );
 }
 
 /** Painel com os tópicos que aparecem no card da home. */

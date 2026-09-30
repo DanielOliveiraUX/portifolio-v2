@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { site } from "@/data/site";
 import s from "./Header.module.css";
 
 const links = [
@@ -11,7 +10,7 @@ const links = [
   { href: "/#contato", label: "Contato" },
 ];
 
-export function Header() {
+export function Header({ email, linkedin }: { email: string; linkedin: string }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -63,8 +62,8 @@ export function Header() {
           </Link>
         ))}
         <div className={s.contacts}>
-          <a href={`mailto:${site.email}`}>{site.email}</a>
-          <a href={site.linkedin} target="_blank" rel="noopener noreferrer">
+          <a href={`mailto:${email}`}>{email}</a>
+          <a href={linkedin} target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
         </div>

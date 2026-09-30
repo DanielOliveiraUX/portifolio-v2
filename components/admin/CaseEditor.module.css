@@ -198,3 +198,15 @@ a.ghost {
   font-size: 14px;
   cursor: pointer;
 }
+
+.panelHint {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+select.altInput {
+  flex: 0 1 auto;
+  width: 100%;
+  cursor: pointer;
+}

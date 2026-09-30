@@ -21,15 +21,17 @@ Abre em http://localhost:3000.
 
 ## Onde editar o conteúdo
 
-- **Projetos:** `data/projects.ts`. Cada item vira um card e uma página de case. `featured: true` coloca o projeto na Home (máximo 3). As seções do case e o índice lateral são gerados a partir de `sections`.
-- **Textos da Home, contato e links:** `data/site.ts`.
-- **Link de agendamento:** `site.scheduleUrl` em `data/site.ts`. Hoje abre um e-mail; troque pelo link da ferramenta quando definir.
-- **Imagens:** coloque os arquivos em `public/images/` e troque os caminhos em `data/`. Hoje todas usam `placeholder.jpg`. Para ter a imagem atual do Figma, exporte o layer "image 16" e salve por cima de `public/images/placeholder.jpg`.
+O jeito normal é pelo editor em `/admin` (senha em `ADMIN_PASSWORD`). Ele grava direto nos arquivos abaixo: no GitHub quando o site está publicado (`GITHUB_TOKEN` e `GITHUB_REPO` na Vercel) ou no disco quando roda local.
+
+- **Artigos (cases):** `data/cases.json`. No editor: abra o artigo e clique em "Editar" para mudar textos, imagens, seções, tópicos do card e a animação da capa. Em `/admin`: ordem, destaques da home (até 3), criar e apagar.
+- **Textos, imagens e links do site:** `data/site.json`. Em `/admin`, seção "Site": hero (cargo, localização, imagem), seção verde, sobre mim (texto e foto), contato (título, botão de chamada e link, e-mail, LinkedIn, rodapé) e título/descrição para o Google.
+- **Animações de capa:** páginas HTML em `public/motion/`. Um arquivo novo nessa pasta aparece na lista do editor depois do push.
+- **Imagens enviadas pelo editor:** ficam em `public/images/uploads/`.
 
 ## Deploy
 
 1. Suba a pasta para o repositório no GitHub (sem `node_modules` e `.next`, o `.gitignore` já cuida disso).
-2. Na Vercel: **Add New → Project → Import** o repositório. O preset Next.js é detectado sozinho; não precisa de variável de ambiente.
+2. Na Vercel: **Add New → Project → Import** o repositório. O preset Next.js é detectado sozinho. Para o editor funcionar no site publicado, configure `ADMIN_PASSWORD` (12+ caracteres), `GITHUB_TOKEN` (com permissão de escrita em Contents) e `GITHUB_REPO` (`usuario/repositorio`).
 3. Cada push na branch principal gera um deploy de produção; outras branches geram preview.
 
 ## Animações (GSAP)

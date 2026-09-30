@@ -4,14 +4,14 @@ import { SectionLabel } from "@/components/SectionLabel";
 import { FeaturedProject } from "@/components/FeaturedProject";
 import { ProjectTabs, AllProjectsLink } from "@/components/ProjectTabs";
 import { Contact } from "@/components/Contact";
-import { getFeaturedProjects } from "@/lib/content";
+import { getFeaturedProjects, getSite } from "@/lib/content";
 import { AboutText } from "@/components/AboutText";
 import { HeroScroll } from "@/components/HeroScroll";
-import { bio, bioImage, heroImage, site } from "@/data/site";
 import s from "./page.module.css";
 
 export default async function Home() {
-  const featuredProjects = await getFeaturedProjects();
+  const [featuredProjects, site] = await Promise.all([getFeaturedProjects(), getSite()]);
+  const { hero, about, bio } = site;
 
   return (
     <>
@@ -20,7 +20,7 @@ export default async function Home() {
         className={s.hero}
         bgClassName={s.heroBg}
         contentClassName={`container ${s.heroInner}`}
-        background={<Image src={heroImage.src} alt="" fill priority sizes="100vw" className={s.heroImg} />}
+        background={<Image src={hero.image.src} alt="" fill priority sizes="100vw" className={s.heroImg} />}
       >
         <h1 className={s.name}>
           <span className="sr-only">Daniel Oliveira</span>
@@ -28,14 +28,14 @@ export default async function Home() {
           <OliveiraMark className={s.oliveira} />
         </h1>
         <div className={s.subline}>
-          <p className={s.role}>{site.role}</p>
-          <p className={s.location}>{site.location}</p>
+          <p className={s.role}>{hero.role}</p>
+          <p className={s.location}>{hero.location}</p>
         </div>
       </HeroScroll>
 
       {/* Seção verde */}
       <section className={s.about} aria-label="Como eu trabalho">
-        <AboutText className={`container ${s.aboutInner}`} lineClassName={s.aboutLine} />
+        <AboutText paragraphs={about.paragraphs} className={`container ${s.aboutInner}`} lineClassName={s.aboutLine} />
       </section>
 
       {/* Projetos selecionados */}
@@ -74,10 +74,10 @@ export default async function Home() {
               <OliveiraMark className={s.bioOliveira} />
             </div>
             <div className={s.bioMedia}>
-              <Image src={bioImage.src} alt={bioImage.alt} fill sizes="(max-width: 699px) 100vw, 464px" className={s.bioImage} />
+              <Image src={bio.image.src} alt={bio.image.alt} fill sizes="(max-width: 699px) 100vw, 464px" className={s.bioImage} />
             </div>
             <div className={s.bioText}>
-              {bio.map((p) => (
+              {bio.paragraphs.map((p) => (
                 <p key={p}>{p}</p>
               ))}
             </div>

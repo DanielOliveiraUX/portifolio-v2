@@ -27,5 +27,23 @@ export type CaseData = {
 
 export type CasesFile = { projects: CaseData[] };
 
+/** Textos e imagens do site fora dos cases (data/site.json). */
+export type SiteData = {
+  hero: { role: string; location: string; image: CaseImage };
+  /** Seção verde: cada parágrafo é uma lista de linhas; trechos entre **asteriscos** saem em negrito. */
+  about: { paragraphs: string[][] };
+  bio: { paragraphs: string[]; image: CaseImage };
+  contact: {
+    /** Quebra de linha vira quebra no título. */
+    title: string;
+    ctaLabel: string;
+    ctaUrl: string;
+    email: string;
+    linkedin: string;
+    footer: string;
+  };
+  seo: { title: string; description: string };
+};
+
 /** Case pronto para exibir: imagens com URL final e rótulo da aba ("Projeto 01"). */
 export type Project = CaseData & { tab: string; cover: CaseImage };

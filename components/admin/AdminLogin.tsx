@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { SiteEditor } from "./SiteEditor";
 import s from "./AdminLogin.module.css";
 
 type CaseItem = { slug: string; title: string; featured: boolean };
@@ -291,6 +292,15 @@ export function AdminLogin() {
               </p>
             )}
           </form>
+
+          <div className={s.group}>
+            <h2 className={s.label}>Site</h2>
+            <p className={s.muted}>
+              Textos, imagens e links que aparecem fora dos artigos: topo da home, seção verde, sobre mim, contato e como o
+              site aparece no Google.
+            </p>
+            <SiteEditor />
+          </div>
 
           <button className={s.ghost} type="button" onClick={logout}>
             Sair do editor
