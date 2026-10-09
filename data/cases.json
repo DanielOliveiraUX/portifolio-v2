@@ -109,7 +109,7 @@
           "alt": ""
         }
       ],
-      "intro": "Toda semana, três pessoas ficavam além do horário para enviar, uma a uma, e-mails com dados pessoais de cada comprador. O sistema administrativo contratado não oferecia automação e o fornecedor não pretendia criar uma.\nComo PM, meu trabalho foi tratar isso como um problema de negócio,\ncom custo recorrente e prazo para resolver:\nEliminar o gargalo com o menor investimento possível e deixar a equipe independente para operar a solução.",
+      "intro": "Toda semana, três pessoas ficavam além do horário para enviar, uma a uma, e-mails com dados pessoais de cada comprador. O sistema administrativo contratado não oferecia automação e o fornecedor não pretendia criar uma.\n\nComo PM, meu trabalho foi tratar isso como um problema de negócio,\ncom custo recorrente e prazo para resolver:\n\nEliminar o gargalo com o menor investimento possível e deixar a equipe independente para operar a solução.",
       "sections": [
         {
           "id": "visao-geral",
