@@ -4,8 +4,8 @@
       "slug": "concessionarias",
       "featured": true,
       "meta": "Setor automotivo · Produto B2B",
-      "title": "Concessionárias · Plataforma de gestão integrada",
-      "summary": "Uma plataforma única para tirar as concessionárias do vaivém entre sistemas e devolver tempo para vender.",
+      "title": "Concessionárias · Menos sistemas, mais tempo para vender",
+      "summary": "Uma plataforma única, com duas condições difíceis de conciliar: ser mais simples que tudo o que ia substituir e custar pouco para rodar.",
       "bullets": [
         "Mapeei a jornada da concessionária, do cadastro do veículo ao atendimento, e transformei as dores em escopo priorizado",
         "Defini um produto modular sobre a infraestrutura existente, reduzindo custo de licenças e dependência de fornecedores",
@@ -26,14 +26,19 @@
           "alt": ""
         }
       ],
-      "intro": "Concessionárias trabalham com equipes de alta rotatividade e pouco tempo sobrando.\nMesmo assim, tarefas básicas como cadastrar um carro ou atualizar um\nanúncio dependiam de vários sistemas, cada um com seu login e sua curva de aprendizado.\nComo PM, meu trabalho foi transformar essa fragmentação numa tese de produto:\n\nUma plataforma única, viável para a empresa construir e simples o bastante para qualquer colaborador adotar.",
+      "intro": "Concessionária vive de vender carro, mas o time muda o tempo todo e não sobra tempo para treinar ninguém. Mesmo assim, cadastrar um veículo ou atualizar um anúncio passava por diversos sistemas, cada um com seu login e seu jeito de funcionar. As equipes digitavam a mesma informação em todos eles, todo dia.\n\nEntrei como PM para descobrir se isso cabia num produto só, antes de a empresa colocar dinheiro em desenvolvimento. Visitei 4 concessionárias, montei o escopo contra o custo de operar cada integração e fechei o projeto com o produto validado em teste de usabilidade, o custo de construção estimado e a documentação pronta para o time tocar.",
       "sections": [
         {
           "id": "visao-geral",
           "title": "Visão geral",
           "paragraphs": [
-            "O problema não era falta de ferramenta, era excesso. Cada etapa da operação (estoque, anúncios em portais, atendimento ao cliente) vivia num sistema diferente, e nenhum conversava com o outro. O resultado era retrabalho diário: o mesmo anúncio atualizado à mão em vários portais, dados do veículo digitados mais de uma vez e clientes esperando resposta.",
-            "Para o negócio, a oportunidade era clara. Centralizar essas tarefas num só produto reduz o custo operacional da concessionária e cria para a empresa um produto com potencial de receita recorrente no setor automotivo."
+            "A empresa queria abrir uma frente de receita recorrente no setor automotivo. Meu trabalho era responder se isso se pagava e colocar a resposta de pé em protótipo, antes de alguém escrever a primeira linha de código.",
+            "A oportunidade estava em pequenas melhorias como estoque, anúncios e atendimento que viviam em sistemas que não trocavam dados, então a equipe digitava a mesma informação várias vezes por dia e atualizava o mesmo anúncio à mão em cada portal. Isso é custo operacional na conta da concessionária, e é exatamente o que uma plataforma única apaga.",
+            "Além disso, equipe de concessionária costuma mudar com mais frequência e cada pessoa nova aprende as ferramentas no corredor, com quem está do lado. Um produto que substitui várias ferramentas só entra se for mais fácil que todas elas somadas, e isso virou a primeira regra de corte do escopo. Custou funcionalidades que os entrevistados tinham pedido.",
+            "A segunda regra veio da margem. Chamadas de API, armazenamento de fotos, Integrações B2B. São custos que crescem junto com o uso: quanto mais o cliente usa, mais caro ele fica para a empresa. Tratei os dois como decisão de preço e não como detalhe de implementação, porque eram eles que definiam qual mensalidade o produto podia cobrar e ainda fechar a conta.",
+            "Por isso a plataforma foi desenhada em módulos sobre a infraestrutura que a empresa já operava. A escolha resolveu três coisas de uma vez: cortou licença de fornecedor, tirou a dependência de terceiros no caminho crítico e permitiu que a concessionária entrasse por um módulo só, o que baixa a barreira de venda.",
+            "Construí o protótipo navegável da plataforma inteira em vez de parar na especificação. Foi ele que permitiu testar os fluxos com quem ia usar, em vez de perguntar o que as pessoas achariam de uma ideia. E foi ele que deu ao time técnico uma base concreta para orçar, porque estimativa feita em cima de documento vira chute e estimativa feita em cima de fluxo definido fecha.",
+            "O projeto terminou com quatro frentes priorizadas, protótipo validado em teste de usabilidade com usuários reais e custo de construção estimado em cima dele. A diretoria saiu com uma decisão de investimento apoiada em número em vez de intuição. O que esse trabalho ainda não prova é adoção. Enquanto o produto não rodar numa concessionária de verdade, a tese continua sendo hipótese, só que uma hipótese difícil de ignorar."
           ],
           "image": {
             "src": "/images/uploads/concessionarias-1790470567056-e569ed.jpg",
