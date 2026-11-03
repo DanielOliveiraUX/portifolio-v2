@@ -38,7 +38,7 @@
             "O projeto terminou com quatro frentes priorizadas, protótipo navegável validado com usuários reais e custo de construção estimado em cima dele. A diretoria saiu com uma decisão de investimento apoiada em número. O que esse trabalho ainda não prova é adoção. Enquanto o produto não rodar numa concessionária de verdade, a tese continua sendo hipótese, só que uma hipótese cara de ignorar."
           ],
           "image": {
-            "src": "/images/uploads/concessionarias-1790470567056-e569ed.jpg",
+            "src": "/images/uploads/concessionarias-1793731405331-c6b310.png",
             "alt": ""
           }
         },
@@ -50,7 +50,11 @@
             "O perfil de quem usa fechava pouco com software corporativo tradicional. Equipe que gira rápido, rotina sem brecha para treinamento e familiaridade digital bem desigual. Isso colocou um teto na complexidade aceitável antes de existir qualquer tela.",
             "Do lado da empresa, a vantagem não era tecnológica. Era conhecer a operação de perto e já ter infraestrutura rodando que o produto podia aproveitar. [1]",
             "A decisão que eu precisava destravar era de alocação de capital. A empresa não escolhia entre duas soluções, escolhia entre investir num produto novo ou seguir tocando o que já dava dinheiro. Meu papel foi reduzir essa escolha a um número defensável: quanto custa construir, quanto custa manter por cliente e a partir de qual mensalidade a conta vira."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/concessionarias-1793733276755-df0130.jpg",
+            "alt": ""
+          }
         },
         {
           "id": "pesquisa-e-descoberta",
@@ -59,7 +63,11 @@
             "Fui às concessionárias em vez de mandar formulário. Conversei com dois donos e três gestores, que me deram a versão oficial do processo, e acompanhei parte das equipes trabalhando, que me deu a versão real. As duas nunca batem. O que o gestor descreve é o que deveria acontecer; o que acontece está no atalho que o vendedor inventou para dar conta do dia.",
             "Mapeei a jornada inteira, do cadastro do veículo ao atendimento do cliente, marcando onde o tempo se perdia e quais sistemas não trocavam dados. Esse mapa substituiu a lista de pedidos como base de priorização. Funcionalidade pedida diz o que a pessoa imagina que resolve o problema dela. Tempo perdido diz onde o problema está.",
             "O campo corrigiu minha hipótese inicial. Eu tinha entrado achando que a dor central era organizar estoque e contatos, que é o que um CRM ou um ERP resolveria. Não era. O gargalo estava em anunciar o mesmo veículo em várias plataformas, uma por uma, e refazer tudo a cada alteração de preço ou de status. Organizar estoque melhorava a vida de quem administra. Publicar anúncio de uma vez só devolvia hora de trabalho para quem vende. Com isso, o hub de anúncios virou o centro do produto e a gestão de estoque e contatos desceu na ordem, mesmo sendo o tipo de funcionalidade que todo mundo espera ver primeiro numa plataforma dessas."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/concessionarias-1793733346957-0569bd.png",
+            "alt": ""
+          }
         },
         {
           "id": "decisoes-chave",
@@ -79,7 +87,11 @@
             "O teste de usabilidade mudou o produto. O cadastro de veículo, que eu tinha desenhado como formulário enxuto, ainda era lento demais para quem faz isso dezenas de vezes por semana. Reescrevemos o fluxo e passamos a puxar os dados do veículo por integração de API a partir da placa, com a pessoa revisando em vez de digitando. Isso trocou trabalho manual por uma chamada paga, o que só fechou porque o custo por consulta já estava na conta da margem desde o começo.",
             "O protótipo também foi o que tornou a estimativa confiável. Orçamento feito em cima de documento é chute; feito em cima de fluxo definido, fecha. A empresa saiu com o custo de construção levantado e com a base para precificar a assinatura.",
             "Os fluxos foram desenhados para que alguém com pouca familiaridade digital executasse a tarefa sem treinamento longo, e o processo ficou documentado para suporte e onboarding, que é onde esse tipo de produto costuma sangrar depois do lançamento."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/concessionarias-1793733385677-059f99.png",
+            "alt": ""
+          }
         },
         {
           "id": "aprendizados",
