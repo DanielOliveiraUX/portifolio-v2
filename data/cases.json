@@ -26,13 +26,13 @@
           "alt": ""
         }
       ],
-      "intro": "Concessionária vive de vender carro, mas o time muda o tempo todo e ninguém tem folga na agenda para treinar quem chega. Mesmo assim, cadastrar um veículo ou atualizar um anúncio passava por diversos sistemas, cada um com seu login e seu jeito de funcionar. As equipes digitavam a mesma informação em todos eles, todo dia.\n\nEntrei como PM para descobrir se isso cabia num produto só, antes de a empresa colocar dinheiro em desenvolvimento. Visitei quatro concessionárias e montei o escopo contra o custo de operar cada integração. O projeto fechou com protótipo navegável validado em teste de usabilidade, custo de construção estimado e documentação pronta para o time construir.",
+      "intro": "Concessionária vive de vender carro, mas o time muda o tempo todo e ninguém tem folga na agenda para treinar quem chega. Mesmo assim, cadastrar um veículo ou atualizar um anúncio passava por diversos sistemas, cada um com seu login e seu jeito de funcionar. As equipes digitavam a mesma informação em todos eles, todo dia.\n\nEntrei como PM para descobrir se isso cabia num produto só, antes de a empresa colocar dinheiro em desenvolvimento. Visitei duas concessionárias, ouvi dois donos, três gestores e parte das equipes que operam o dia a dia, e montei o escopo contra o custo de operar cada integração. O projeto fechou com protótipo navegável validado em teste de usabilidade, custo de construção estimado e documentação pronta para o time construir.",
       "sections": [
         {
           "id": "visao-geral",
           "title": "Visão geral",
           "paragraphs": [
-            "A empresa queria abrir uma frente de receita recorrente no setor automotivo. Meu trabalho era responder se isso se pagava e colocar a resposta de pé em protótipo, antes de alguém escrever a primeira linha de código.",
+            "A empresa é uma software house que queria abrir uma frente de receita recorrente no setor automotivo. Meu trabalho era responder se isso se pagava e colocar a resposta de pé em protótipo, antes de alguém escrever a primeira linha de código.",
             "A oportunidade estava na soma de perdas pequenas. Estoque, anúncios e atendimento viviam em sistemas que não trocavam dados, então a equipe digitava a mesma informação várias vezes por dia e atualizava o mesmo anúncio à mão em cada portal. Isso é custo operacional na conta da concessionária, e é o que uma plataforma única apaga.",
             "Duas restrições mandaram no projeto do começo ao fim. O produto tinha que ser mais fácil que todas as ferramentas que substituía, senão ninguém trocaria. E tinha que ser barato de operar, porque integração e armazenamento crescem junto com o uso.",
             "O projeto terminou com quatro frentes priorizadas, protótipo navegável validado com usuários reais e custo de construção estimado em cima dele. A diretoria saiu com uma decisão de investimento apoiada em número. O que esse trabalho ainda não prova é adoção. Enquanto o produto não rodar numa concessionária de verdade, a tese continua sendo hipótese, só que uma hipótese cara de ignorar."
@@ -46,41 +46,48 @@
           "id": "contexto-do-negocio",
           "title": "Contexto do negócio",
           "paragraphs": [
-            "O problema apareceu em conversas e visitas técnicas às concessionárias. O padrão se repetia: vários logins, conhecimento espalhado entre sistemas e muito tempo gasto em ações repetitivas. A rotatividade das equipes piorava tudo, porque cada pessoa nova precisava aprender várias ferramentas ao mesmo tempo.",
-            "Isso definiu duas restrições desde o início. O produto precisava ser mais simples do que o conjunto de ferramentas que ia substituir, senão ninguém trocaria. E precisava ser barato de operar, porque integrações e armazenamento seriam os maiores custos recorrentes."
+            "Quem compra não é quem usa, e os dois precisavam ser convencidos de coisas diferentes. A assinatura é decidida pelo dono ou pelo gerente, que olha custo mensal e quer ver número caindo em outro lugar. Quem abre o sistema todo dia é o vendedor e a pessoa do cadastro, que não escolheram nada e largam a ferramenta na primeira semana se ela atrapalhar. Produto por assinatura morre se agradar só o primeiro.",
+            "O perfil de quem usa fechava pouco com software corporativo tradicional. Equipe que gira rápido, rotina sem brecha para treinamento e familiaridade digital bem desigual. Isso colocou um teto na complexidade aceitável antes de existir qualquer tela.",
+            "Do lado da empresa, a vantagem não era tecnológica. Era conhecer a operação de perto e já ter infraestrutura rodando que o produto podia aproveitar. [1]",
+            "A decisão que eu precisava destravar era de alocação de capital. A empresa não escolhia entre duas soluções, escolhia entre investir num produto novo ou seguir tocando o que já dava dinheiro. Meu papel foi reduzir essa escolha a um número defensável: quanto custa construir, quanto custa manter por cliente e a partir de qual mensalidade a conta vira."
           ]
         },
         {
           "id": "pesquisa-e-descoberta",
           "title": "Pesquisa e descoberta",
           "paragraphs": [
-            "Comecei mapeando a jornada completa, do cadastro do veículo ao atendimento do cliente. Com entrevistas e observação do trabalho real, identifiquei onde estavam as fricções, quais tarefas se repetiam e quais sistemas não trocavam dados entre si.",
-            "Esse mapa virou a base da priorização. Em vez de uma lista de funcionalidades pedidas, o time passou a ter um retrato de onde o tempo da equipe estava sendo perdido, e foi isso que orientou o que entraria primeiro no produto."
+            "Fui às concessionárias em vez de mandar formulário. Conversei com dois donos e três gestores, que me deram a versão oficial do processo, e acompanhei parte das equipes trabalhando, que me deu a versão real. As duas nunca batem. O que o gestor descreve é o que deveria acontecer; o que acontece está no atalho que o vendedor inventou para dar conta do dia.",
+            "Mapeei a jornada inteira, do cadastro do veículo ao atendimento do cliente, marcando onde o tempo se perdia e quais sistemas não trocavam dados. Esse mapa substituiu a lista de pedidos como base de priorização. Funcionalidade pedida diz o que a pessoa imagina que resolve o problema dela. Tempo perdido diz onde o problema está.",
+            "O campo corrigiu minha hipótese inicial. Eu tinha entrado achando que a dor central era organizar estoque e contatos, que é o que um CRM ou um ERP resolveria. Não era. O gargalo estava em anunciar o mesmo veículo em várias plataformas, uma por uma, e refazer tudo a cada alteração de preço ou de status. Organizar estoque melhorava a vida de quem administra. Publicar anúncio de uma vez só devolvia hora de trabalho para quem vende. Com isso, o hub de anúncios virou o centro do produto e a gestão de estoque e contatos desceu na ordem, mesmo sendo o tipo de funcionalidade que todo mundo espera ver primeiro numa plataforma dessas."
           ]
         },
         {
           "id": "decisoes-chave",
           "title": "Decisões-chave",
           "paragraphs": [
-            "Priorizei quatro frentes que atacavam as maiores perdas de tempo: cadastro de veículos com preenchimento otimizado, consulta automática a bases públicas de dados veiculares e restrições, um hub para editar e publicar anúncios em vários portais de uma vez e um agente virtual para fazer o primeiro contato e os agendamentos com clientes.",
-            "Optei por uma arquitetura modular sobre a infraestrutura que a empresa já usava. Isso reduziu o custo com licenças, evitou dependência de vários fornecedores e permitiu que as concessionárias adotassem o produto aos poucos.",
-            "Integrações com APIs pagas e armazenamento de imagens foram tratados como decisões de negócio, não só técnicas. Cada uma foi planejada para equilibrar desempenho e custo, para que o produto continuasse competitivo sem comprometer a margem."
+            "Entraram quatro frentes, todas escolhidas por tempo recuperado: hub para publicar e editar anúncios em vários portais de uma vez, cadastro de veículo com preenchimento otimizado, consulta automática a bases públicas de dados e restrições, e um agente virtual para primeiro contato e agendamento.",
+            "A regra de corte foi a simplicidade. Qualquer coisa que exigisse treinamento para ser usada perdia a disputa, por mais valor que prometesse, porque o produto já nascia competindo com a inércia de uma equipe que troca de gente toda hora.",
+            "A segunda regra veio da margem. Consulta a base pública se paga por chamada, e foto de carro ocupa armazenamento, sendo que concessionária fotografa o dia inteiro. São custos que sobem junto com o uso: quanto mais o cliente usa, mais caro ele fica para a empresa. Tratei os dois como decisão de preço e não como detalhe técnico, porque eram eles que definiam qual mensalidade o produto podia cobrar e ainda fechar a conta.",
+            "Por isso desenhei a plataforma em módulos sobre a infraestrutura que a empresa já operava. A escolha cortou licença de fornecedor, tirou dependência de terceiros do caminho crítico e deixou a concessionária entrar por um módulo só, o que baixa a barreira de venda."
           ]
         },
         {
           "id": "o-que-foi-entregue",
           "title": "O que foi entregue",
           "paragraphs": [
-            "O projeto chegou a um produto com escopo bem definido, validado em testes de usabilidade com usuários reais e pronto para desenvolvimento. Os fluxos foram pensados para que colaboradores com pouca familiaridade digital executassem as tarefas sem treinamento longo, e os processos ficaram documentados para suporte e onboarding.",
-            "Com a necessidade e o mercado bem entendidos, foi possível estimar com precisão o custo de implementação. Isso deu à empresa uma base concreta para precificar o produto e definir a estratégia de lançamento."
+            "Construí no Figma o protótipo navegável da plataforma inteira em vez de parar na especificação. Foi ele que permitiu testar fluxo com quem ia usar, em vez de perguntar o que as pessoas achariam de uma ideia.",
+            "O teste de usabilidade mudou o produto. O cadastro de veículo, que eu tinha desenhado como formulário enxuto, ainda era lento demais para quem faz isso dezenas de vezes por semana. Reescrevemos o fluxo e passamos a puxar os dados do veículo por integração de API a partir da placa, com a pessoa revisando em vez de digitando. Isso trocou trabalho manual por uma chamada paga, o que só fechou porque o custo por consulta já estava na conta da margem desde o começo.",
+            "O protótipo também foi o que tornou a estimativa confiável. Orçamento feito em cima de documento é chute; feito em cima de fluxo definido, fecha. A empresa saiu com o custo de construção levantado e com a base para precificar a assinatura.",
+            "Os fluxos foram desenhados para que alguém com pouca familiaridade digital executasse a tarefa sem treinamento longo, e o processo ficou documentado para suporte e onboarding, que é onde esse tipo de produto costuma sangrar depois do lançamento."
           ]
         },
         {
           "id": "aprendizados",
           "title": "Aprendizados",
           "paragraphs": [
-            "Em operações com muitas dores ao mesmo tempo, centralizar e simplificar gera mais valor percebido do que adicionar funcionalidades. E o custo de infraestrutura precisa entrar na conversa desde o começo, porque é ele que decide se o produto se sustenta.",
-            "Trabalhar perto do time de desenvolvimento desde cedo manteve as decisões de produto compatíveis com a realidade técnica e evitou retrabalho na hora de construir."
+            "A dor que as pessoas descrevem não é a dor que custa mais caro. Estoque e contatos eram o que apareciam na conversa; anunciar em vários portais era onde o tempo ia embora. Se eu tivesse priorizado pelo que foi pedido, teria construído um produto correto e irrelevante.",
+            "Custo de infraestrutura é decisão de produto, não consequência dela. Se tivesse entrado na conversa depois do escopo definido, eu teria desenhado um produto que não fechava no preço que o mercado paga.",
+            "O que eu faria diferente: o protótipo foi feito no Figma, e hoje eu o faria em código. Teria chegado mais rápido no mesmo resultado, teria dado ao time de engenharia uma base muito mais definida para orçar e construir, e as decisões de interface já nasceriam testadas contra a realidade técnica em vez de validadas só com usuário."
           ]
         }
       ]
