@@ -141,7 +141,7 @@
             "A empresa tinha três caminhos: esperar o fornecedor mudar de ideia, contratar um SaaS para resolver um problema específico ou construir internamente. Escolhi o terceiro e entreguei a rotina funcionando com as ferramentas que a empresa já pagava. As horas extras do processo foram a zero, o que devolveu à empresa mais de R$ 14 mil por ano só no adicional de hora extra."
           ],
           "image": {
-            "src": "/images/placeholder.jpg",
+            "src": "/images/uploads/hora-extra-1793817681406-52b8cd.png",
             "alt": ""
           }
         },
@@ -152,7 +152,11 @@
             "Descobri o tamanho do problema cobrindo a função de um colega em licença. Executei a tarefa eu mesmo e foi aí que o custo deixou de ser um número no relatório e virou coisa concreta: o tempo que leva, o ponto da noite em que a atenção cai e o tipo de erro que aparece quando cai.",
             "A restrição principal não era técnica, era de fornecedor. O sistema administrativo é contratado, não tem esse recurso, e quem o vende não demonstrou interesse em construí-lo. Esperar não era um plano, era uma aposta no interesse de outra empresa. Qualquer solução teria que nascer fora do sistema principal e continuar funcionando sem depender de ninguém de fora.",
             "Também era um problema pequeno demais para justificar projeto grande. Rotina de pós-venda não concorre com roadmap de produto por atenção de diretoria. Ou cabia no que a empresa já tinha, ou não aconteceria."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/hora-extra-1793817706553-f9c2ec.png",
+            "alt": ""
+          }
         },
         {
           "id": "pesquisa-e-descoberta",
@@ -170,7 +174,11 @@
             "Comparei os três caminhos pelo que cada um custava e por quanto tempo deixava o problema de pé. Esperar o fornecedor tinha custo zero e prazo indefinido, o que na prática significa manter a hora extra rodando. SaaS resolvia rápido, mas trazia licença mensal e mais um fornecedor para administrar, por causa de uma tarefa só. Construir internamente custava tempo uma vez e nada depois.",
             "Optei por construir com o que a empresa já tinha. Defini as regras de montagem de cada e-mail, os dados que seriam exportados do sistema e o critério de pronto, e desenvolvi uma planilha automatizada em VBScript. Ela lê a exportação, preenche cada mensagem e dispara todos os envios de uma vez.",
             "Coloquei adoção dentro do escopo em vez de deixar para depois. A entrega incluiu guia passo a passo e treinamento com o time, porque a solução só valeria alguma coisa se continuasse funcionando sem mim."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/hora-extra-1793817724128-2f4e91.png",
+            "alt": ""
+          }
         },
         {
           "id": "o-que-foi-entregue",
@@ -180,7 +188,11 @@
             "Cálculo: três colaboradores com salário de dois salários mínimos de 2024 (R$ 1.412), divisor de 220 horas e adicional de 50% sobre a hora normal.",
             "O comprador passou a receber as informações mais rápido, e o envio automatizado tirou do caminho a digitação de dado pessoal no fim do expediente, que era onde o erro aparecia.",
             "A rotina ficou com o time, documentada e treinada. Ninguém precisa chamar quem construiu para rodar."
-          ]
+          ],
+          "image": {
+            "src": "/images/uploads/hora-extra-1793817731966-b600da.png",
+            "alt": ""
+          }
         },
         {
           "id": "aprendizados",
